@@ -278,7 +278,10 @@ async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
 
   // Auto-logout on 401 — session expired or invalid
   if (response.status === 401) {
-    try { localStorage.removeItem('aeronav:auth') } catch {}
+    try {
+      localStorage.removeItem('aeronav:auth')
+      localStorage.removeItem('aeronav:bootstrap')
+    } catch {}
     window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
     throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
   }
@@ -336,7 +339,10 @@ async function requestBootstrap(version?: string | null): Promise<BootstrapResul
   }
 
   if (response.status === 401) {
-    try { localStorage.removeItem('aeronav:auth') } catch {}
+    try {
+      localStorage.removeItem('aeronav:auth')
+      localStorage.removeItem('aeronav:bootstrap')
+    } catch {}
     window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
     throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
   }

@@ -11,6 +11,14 @@ const AuthContext = createContext<AuthState | null>(null)
 
 const AUTH_KEY = 'aeronav:auth'
 
+function readStoredAuth() {
+  try {
+    return localStorage.getItem(AUTH_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 function storeAuth(value: boolean) {
   try {
     if (value) {
@@ -24,41 +32,8 @@ function storeAuth(value: boolean) {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isAuthenticated, setAuthenticated] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-
-  useEffect(() => {
-    let cancelled = false
-
-    async function verifySession() {
-      try {
-        const response = await fetch('/api/bootstrap', { credentials: 'same-origin' })
-        if (cancelled) return
-        if (response.ok) {
-          setAuthenticated(true)
-          storeAuth(true)
-        } else {
-          setAuthenticated(false)
-          storeAuth(false)
-        }
-      } catch {
-        if (!cancelled) {
-          setAuthenticated(false)
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false)
-        }
-      }
-    }
-
-    void verifySession()
-
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const [isAuthenticated, setAuthenticated] = useState(readStoredAuth)
+  const [isLoading, setIsLoading] = useState(false)
 
   // Sync across tabs
   useEffect(() => {
