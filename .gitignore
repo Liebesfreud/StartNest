@@ -23,6 +23,8 @@ dist/
 .omc/sessions/
 .omc/plans/
 .omc/logs/
+.omc/project-memory.json
+state/
 
 # Logs
 npm-debug.log*
@@ -36,3 +38,5 @@ pnpm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+

@@ -1,5 +1,0 @@
--- This file intentionally remains as an empty compatibility placeholder.
--- A duplicate 0008 migration name had already entered migration history,
--- so renaming or deleting this file would cause previously migrated D1
--- databases to drift from the repository's migration ledger.
--- Use 0008_add_wallpaper_effect_settings.sql for the actual schema change.

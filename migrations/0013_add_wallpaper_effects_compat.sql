@@ -1,0 +1,3 @@
+-- This file intentionally remains as an empty compatibility placeholder.
+-- A duplicate 0008 migration name existed before the project was prepared for open source.
+-- Use 0008_add_wallpaper_effect_settings.sql for the actual schema change.
