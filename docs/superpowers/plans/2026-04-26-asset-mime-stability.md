@@ -26,7 +26,7 @@
 Replace the full contents of `public/sw.js` with:
 
 ```js
-const VERSION = 'aeronav-static-v2'
+const VERSION = 'startnest-static-v2'
 const RUNTIME_CACHE = `runtime-${VERSION}`
 const ICON_CACHE = `icons-${VERSION}`
 const FONT_CACHE = `fonts-${VERSION}`
@@ -104,7 +104,7 @@ git diff -- public/sw.js
 ```
 
 Expected:
-- `VERSION` changes from `aeronav-static-v1` to `aeronav-static-v2`.
+- `VERSION` changes from `startnest-static-v1` to `startnest-static-v2`.
 - The branch handling `request.destination === 'document'` is removed.
 - `/api/icon` and Google Font caching remain.
 
@@ -252,11 +252,11 @@ Expected:
 Run:
 
 ```bash
-Select-String -Path "dist\sw.js" -Pattern "aeronav-static-v2|request.destination|document|api/icon|fonts.googleapis"
+Select-String -Path "dist\sw.js" -Pattern "startnest-static-v2|request.destination|document|api/icon|fonts.googleapis"
 ```
 
 Expected:
-- Finds `aeronav-static-v2`.
+- Finds `startnest-static-v2`.
 - Finds `/api/icon` behavior and Google Font matching.
 - Does not find a document-caching branch such as `request.destination === 'document'`.
 

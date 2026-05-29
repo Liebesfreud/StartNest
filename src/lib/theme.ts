@@ -1,6 +1,6 @@
 export type ThemeMode = 'light' | 'dark' | 'system'
 
-export const THEME_MODE_STORAGE_KEY = 'aeronav:theme-mode'
+export const THEME_MODE_STORAGE_KEY = 'startnest:theme-mode'
 export const DARK_THEME_COLOR = '#181716'
 export const LIGHT_THEME_COLOR = '#F9F8F6'
 

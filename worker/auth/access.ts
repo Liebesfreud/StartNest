@@ -1,6 +1,6 @@
 import type { Env, User } from '../db/schema'
 
-const SESSION_COOKIE_NAME = 'aeronav_session'
+const SESSION_COOKIE_NAME = 'startnest_session'
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7
 const LOGIN_WINDOW_SECONDS = 15 * 60
 const MAX_LOGIN_ATTEMPTS = 5
@@ -247,7 +247,7 @@ export async function requireUser(request: Request, env: Env): Promise<User> {
   return user
 }
 
-export function unauthorizedHtml(appName = 'AeroNav') {
+export function unauthorizedHtml(appName = 'StartNest') {
   return `<!doctype html>
 <html lang="zh-CN">
   <head>

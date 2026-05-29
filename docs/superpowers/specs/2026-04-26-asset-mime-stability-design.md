@@ -26,7 +26,7 @@ A separate `ERR_BLOCKED_BY_CLIENT` from Cloudflare Insights is caused by client-
 
 `public/sw.js` will be changed so it no longer intercepts or caches document requests. It will continue using stale-while-revalidate for `/api/icon` and Google Fonts only.
 
-The cache version will be bumped from `aeronav-static-v1` to a new version so activation deletes older runtime caches, including stale document caches from the previous strategy.
+The cache version will be bumped from `startnest-static-v1` to a new version so activation deletes older runtime caches, including stale document caches from the previous strategy.
 
 ### Worker Static Asset Guard
 

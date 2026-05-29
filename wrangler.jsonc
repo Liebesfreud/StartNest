@@ -1,6 +1,6 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "aeronav-private-nav",
+	"name": "startnest-private-start",
 	"main": "worker/index.ts",
 	"compatibility_date": "2026-04-06",
 	"assets": {
@@ -11,13 +11,13 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "aeronav-db",
+			"database_name": "startnest-db",
 			"database_id": "YOUR_D1_DATABASE_ID",
 			"migrations_dir": "migrations"
 		}
 	],
 	"vars": {
-		"APP_NAME": "AeroNav"
+		"APP_NAME": "StartNest"
 	}
 }
 

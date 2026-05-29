@@ -9,7 +9,7 @@ type AuthState = {
 
 const AuthContext = createContext<AuthState | null>(null)
 
-const AUTH_KEY = 'aeronav:auth'
+const AUTH_KEY = 'startnest:auth'
 
 function readStoredAuth() {
   try {
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthenticated(false)
     storeAuth(false)
     try {
-      localStorage.removeItem('aeronav:bootstrap')
+      localStorage.removeItem('startnest:bootstrap')
     } catch {
       // ignore
     }

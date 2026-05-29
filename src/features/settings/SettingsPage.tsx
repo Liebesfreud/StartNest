@@ -168,7 +168,7 @@ export function SettingsPage() {
     const href = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = href
-    a.download = `aeronav-export-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `startnest-export-${new Date().toISOString().slice(0, 10)}.json`
     a.click()
     URL.revokeObjectURL(href)
   }
@@ -214,7 +214,7 @@ export function SettingsPage() {
       <div className="space-y-6 lg:space-y-7">
         <header className="border-b border-outline pb-5 dark:border-dark-outline">
           <div className="min-w-0 max-w-3xl">
-            <p className="font-headline text-[13px] italic text-on-surface-variant dark:text-dark-on-surface-variant">AeroNav Settings</p>
+            <p className="font-headline text-[13px] italic text-on-surface-variant dark:text-dark-on-surface-variant">StartNest Settings</p>
             <h1 className="mt-1 font-headline text-3xl font-medium tracking-tight text-on-background dark:text-dark-on-background sm:text-[2.5rem]">个性化设置</h1>
             <p className="mt-3 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">
               在更克制的界面里统一管理主题、导航行为、天气信息与数据备份。

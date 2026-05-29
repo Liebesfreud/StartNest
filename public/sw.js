@@ -1,4 +1,4 @@
-const VERSION = 'aeronav-static-v5'
+const VERSION = 'startnest-static-v5'
 const RUNTIME_CACHE = `runtime-${VERSION}`
 const ICON_CACHE = `icons-${VERSION}`
 const FONT_CACHE = `fonts-${VERSION}`

@@ -140,7 +140,7 @@ export async function getWeather(request: Request) {
 
   const weatherResponse = await fetch(weatherUrl.toString(), {
     signal: AbortSignal.timeout(WTTR_TIMEOUT_MS),
-    headers: { 'User-Agent': 'AeroNav weather proxy' },
+    headers: { 'User-Agent': 'StartNest weather proxy' },
   })
 
   if (!weatherResponse.ok) {

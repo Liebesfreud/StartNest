@@ -18,7 +18,7 @@ export function PageShell({
         <header className="sticky top-0 z-30 -mx-4 mb-6 border-b border-outline/70 bg-background/90 px-4 py-3 backdrop-blur dark:border-dark-outline/80 dark:bg-dark-background/85 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
-              <div className="font-headline text-xl italic tracking-tight text-on-background dark:text-dark-on-background">AeroNav</div>
+              <div className="font-headline text-xl italic tracking-tight text-on-background dark:text-dark-on-background">StartNest</div>
               <h1 className="mt-0.5 font-headline text-[1.125rem] font-medium tracking-tight text-on-surface-variant dark:text-dark-on-surface-variant">{title}</h1>
             </div>
             <nav className="flex items-center gap-2">

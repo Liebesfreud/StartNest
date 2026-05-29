@@ -38,7 +38,7 @@ export function SideNavBar({ themeMode = 'system', onToggleTheme, editMode, onTo
           <AppIcon name="layout-sidebar-left-collapse" className="h-5 w-5" />
         </button>
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-surface-container-low text-sm font-semibold tracking-[0.18em] text-on-background dark:bg-dark-surface-container/70 dark:text-dark-on-background">
-          AN
+          SN
         </div>
         <div className="flex flex-1 flex-col items-center gap-3">
           {navigationItems.map((item) => {

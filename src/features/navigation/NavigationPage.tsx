@@ -435,7 +435,7 @@ export function NavigationPage() {
         onConfirm={() => deleteState && deleteMutation.mutate(deleteState)}
       />
       <div className="pointer-events-none fixed bottom-8 right-10 z-10 flex flex-col items-end gap-1 opacity-20 transition-opacity hover:opacity-100">
-        <p className="font-label text-[9px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">AeroNav</p>
+        <p className="font-label text-[9px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">StartNest</p>
       </div>
     </>
   )

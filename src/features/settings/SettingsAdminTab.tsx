@@ -66,7 +66,7 @@ export function SettingsAdminTab({
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">显示名称</p>
-            <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">仅在 AeroNav 内显示，不会修改登录系统中的姓名。</p>
+            <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">仅在 StartNest 内显示，不会修改登录系统中的姓名。</p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
               <Input value={nameDraft} onChange={(event) => onNameDraftChange(event.target.value)} placeholder="请输入显示名称" className="min-h-11 flex-1" />
               <Button onClick={onSaveName} disabled={updatePending || !canSaveName} className="sm:self-start">

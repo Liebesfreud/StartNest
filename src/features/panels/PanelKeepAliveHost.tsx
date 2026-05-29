@@ -49,7 +49,7 @@ function ExternalPanel({ panel }: { panel: WebPanel }) {
         </div>
         <h2 className="mt-4 font-headline text-xl font-medium text-on-background dark:text-dark-on-background">{panel.title}</h2>
         <p className="mt-2 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">
-          这个面板设置为外部打开，不会在 AeroNav 内嵌显示。
+          这个面板设置为外部打开，不会在 StartNest 内嵌显示。
         </p>
         <Button className="mt-5" onClick={() => window.open(panel.url, '_blank', 'noopener,noreferrer')}>
           在新标签页打开

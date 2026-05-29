@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-quer
 import { api, bootstrapSchema, type BootstrapData } from '../lib/api'
 
 export const bootstrapQueryKey = ['bootstrap'] as const
-const BOOTSTRAP_CACHE_KEY = 'aeronav:bootstrap'
+const BOOTSTRAP_CACHE_KEY = 'startnest:bootstrap'
 
 type BootstrapCache = {
   data: BootstrapData

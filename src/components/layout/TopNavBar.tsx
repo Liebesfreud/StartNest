@@ -10,7 +10,7 @@ export function TopNavBar({ searchNode }: TopNavBarProps) {
     <nav className="fixed inset-x-0 top-0 z-40 h-18 border-b border-outline/50 bg-surface/72 backdrop-blur-xl dark:border-dark-outline/60 dark:bg-dark-surface-elevated/72 md:h-20 md:pl-20">
       <div className="mx-auto flex h-full w-full max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-4 lg:gap-10">
-          <span className="shrink-0 font-headline text-lg font-semibold uppercase tracking-[0.18em] text-on-background dark:text-dark-on-background sm:text-xl">ETHOS</span>
+          <span className="shrink-0 font-headline text-lg font-semibold uppercase tracking-[0.18em] text-on-background dark:text-dark-on-background sm:text-xl">StartNest</span>
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="hidden min-w-0 md:block">{searchNode}</div>

@@ -67,13 +67,13 @@ export function LoginPage() {
         {/* Brand */}
         <div className="mb-10 text-center">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-outline/60 bg-surface shadow-sm dark:border-dark-outline/60 dark:bg-dark-surface">
-            <span className="font-headline text-xl font-semibold tracking-[0.18em] text-on-background dark:text-dark-on-background">AN</span>
+            <span className="font-headline text-xl font-semibold tracking-[0.18em] text-on-background dark:text-dark-on-background">SN</span>
           </div>
           <h1 className="font-headline text-3xl font-normal italic tracking-tight text-on-background dark:text-dark-on-background sm:text-4xl">
-            AeroNav
+            StartNest
           </h1>
           <p className="mt-2 font-label text-xs uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">
-            个人导航 · 私人书签
+            私人起始页 · 书签工作台
           </p>
         </div>
 
@@ -152,7 +152,7 @@ export function LoginPage() {
 
         {/* Footer whisper */}
         <p className="mt-8 text-center font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/40 dark:text-dark-on-surface-variant/40">
-          AeroNav · Private Navigation
+          StartNest · Private Startpage
         </p>
       </div>
     </div>

@@ -66,7 +66,7 @@ export function Layout({ children, activeOverlay, activeOverlayVisible = false, 
           {bootstrapError ? (
             <div className="mx-auto flex min-h-screen w-full max-w-[32rem] items-center justify-center px-6 py-16 text-center">
               <div className="space-y-3 rounded-xl border border-outline bg-surface px-6 py-8 shadow-sm dark:border-dark-outline dark:bg-dark-surface">
-                <p className="font-headline text-xl font-semibold text-on-background dark:text-dark-on-background">AeroNav 加载失败</p>
+                <p className="font-headline text-xl font-semibold text-on-background dark:text-dark-on-background">StartNest 加载失败</p>
                 <p className="text-sm text-on-surface-variant dark:text-dark-on-surface-variant">启动数据暂时不可用，请稍后刷新重试。</p>
               </div>
             </div>
