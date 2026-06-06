@@ -78,7 +78,7 @@ export function Layout({
           <div className="pointer-events-none fixed inset-x-0 top-0 z-50 h-0.5 bg-primary/70" aria-hidden="true" />
         ) : null}
         <main
-          className={`min-h-screen w-full transition-[padding,opacity] duration-200 ${sidebarVisible ? 'md:pl-24' : 'md:pl-0'} ${bootstrapLoading ? 'opacity-80' : 'opacity-100'}`}
+          className={`min-h-screen w-full transition-[padding,opacity] duration-200 ${sidebarVisible ? 'md:pl-20' : 'md:pl-0'} ${bootstrapLoading ? 'opacity-80' : 'opacity-100'}`}
         >
           {bootstrapError ? (
             <div className="mx-auto flex min-h-screen w-full max-w-[32rem] items-center justify-center px-6 py-16 text-center">
