@@ -1,3 +1,5 @@
+import tailwindcssAnimate from 'tailwindcss-animate'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
@@ -5,62 +7,50 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#EBE4D5",
-        surface: "#F4EFE6",
-        "on-background": "#36312D",
-        "on-surface": "#36312D",
-        "on-surface-variant": "#716A63",
-        primary: "#C3694D",
-        "on-primary": "#FFFFFF",
-        outline: "#D6D1C1",
-        "surface-container": "#E0D7C4",
-        "surface-container-low": "#E6E0CF",
-        dark: {
-          background: '#181716',
-          surface: '#252422',
-          'surface-elevated': '#302E2C',
-          'on-background': '#E2DFD8',
-          'on-surface': '#E2DFD8',
-          'on-surface-variant': '#9E9A94',
-          outline: '#383633',
-          'surface-container': '#131110',
-          'surface-container-low': '#1E1C1B',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
-        accent: "#D97757",
-        app: {
-          discord: '#5865F2',
-          twitter: '#1DA1F2',
-          github: '#24292e',
-          tiktok: '#000000',
-          dribbble: '#EA4C89',
-          figma: '#F24E1E',
-          notion: '#000000',
-          bilibili: '#fb7299',
-          xiaohongshu: '#ff2442'
-        }
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
       },
       borderRadius: {
-        DEFAULT: "1rem",
-        lg: "1rem",
-        xl: "1rem",
-        '2xl': '1rem',
-        full: "9999px",
-        xl2: '1rem',
-        squirle: '1rem',
-        app: '1rem'
-      },
-      fontFamily: {
-        headline: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
-        body: ["Inter", "sans-serif"],
-        label: ["Inter", "sans-serif"],
-        serif: ['Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif']
-      },
-      boxShadow: {
-        card: '0 4px 12px -4px rgba(0, 0, 0, 0.08)',
-        glass: '0 4px 12px -4px rgba(0, 0, 0, 0.08)',
-        'glass-hover': '0 8px 24px -6px rgba(0, 0, 0, 0.12)',
+        DEFAULT: 'var(--radius)',
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+        xl: 'calc(var(--radius) + 4px)',
+        '2xl': 'calc(var(--radius) + 8px)',
+        full: '9999px',
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 }

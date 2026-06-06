@@ -1,8 +1,8 @@
 import { useState, type CSSProperties, type DragEvent } from 'react'
 import { AppIcon } from '../../components/AppIcon'
-import { Button } from '../../components/Button'
 import type { Group, LinkItem } from '../../lib/api'
 import { getFaviconUrl } from '../../lib/favicon'
+import { Button } from '@/components/ui/button'
 
 type GroupSection = {
   group: Group
@@ -11,7 +11,9 @@ type GroupSection = {
 
 function renderTextFallback(text: string, sizeClass: string, textClassName = 'text-sm') {
   return (
-    <div className={`${sizeClass} flex items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-primary ${textClassName} font-bold`}>
+    <div
+      className={`${sizeClass} flex items-center justify-center rounded-xl bg-secondary text-primary ${textClassName} font-bold`}
+    >
       {text.trim().slice(0, 2).toUpperCase() || '?'}
     </div>
   )
@@ -28,8 +30,6 @@ function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfort
     ? 'col-span-3 row-span-1 flex h-full w-full items-center gap-2 px-2 py-2 text-left'
     : 'col-span-3 row-span-1 flex h-full w-full items-center gap-2.5 px-2.5 py-2.5 text-left'
 }
-
-
 
 function getCardStyle(backgroundColor: string | null): CSSProperties | undefined {
   if (!backgroundColor) return undefined
@@ -70,8 +70,8 @@ function LinkVisual({
   const [imageFailed, setImageFailed] = useState(false)
   const faviconUrl = getFaviconUrl(link.url)
   const fallbackText = link.iconText || link.title.slice(0, 2) || '?'
-  const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-container-low dark:bg-dark-surface-container/70`
-  const fallbackIconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-outline/60 bg-surface-container shadow-sm dark:border-dark-outline/80 dark:bg-dark-surface-elevated`
+  const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary`
+  const fallbackIconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted shadow-sm`
   const faviconClassName = `${iconClassName} shrink-0 object-contain ${imagePaddingClassName}`
 
   if (link.iconMode === 'image' && link.iconImageUrl && !imageFailed) {
@@ -90,7 +90,7 @@ function LinkVisual({
   if (link.iconMode === 'material' && link.icon) {
     return (
       <div className={iconFrameClassName}>
-        <AppIcon name={link.icon} className={`${glyphClassName} text-primary dark:text-dark-on-surface`} />
+        <AppIcon name={link.icon} className={`${glyphClassName} text-primary `} />
       </div>
     )
   }
@@ -116,7 +116,7 @@ function LinkVisual({
   if (link.iconMode === 'favicon') {
     return (
       <div className={fallbackIconFrameClassName}>
-        <AppIcon name="box" className={`${glyphClassName} text-primary dark:text-dark-on-surface`} />
+        <AppIcon name="box" className={`${glyphClassName} text-primary `} />
       </div>
     )
   }
@@ -190,13 +190,13 @@ export function LinkGrid({
   if (!sections.length) {
     return (
       <section className="mx-auto w-full max-w-[110rem] px-2 pb-24 sm:px-3 lg:px-4 lg:pb-28">
-        <div className="rounded-xl border border-dashed border-outline/50 bg-surface/60 px-6 py-16 text-center dark:border-dark-outline/60 dark:bg-dark-surface-elevated/65">
-          <p className="font-headline text-2xl font-semibold text-on-background dark:text-dark-on-background">还没有任何分组</p>
-          <p className="mt-2 font-body text-sm text-on-surface-variant dark:text-dark-on-surface-variant">先创建一个分组，再把常用链接整理进去。</p>
+        <div className="rounded-xl border border-dashed border-border/50 bg-card/60 px-6 py-16 text-center">
+          <p className="text-2xl font-semibold text-foreground ">还没有任何分组</p>
+          <p className="mt-2 text-sm text-muted-foreground ">先创建一个分组，再把常用链接整理进去。</p>
           {editMode ? (
             <div className="mt-6 flex justify-center">
               <Button onClick={onCreateGroup}>
-                        <AppIcon name="folder-plus" className="mr-2 h-5 w-5" />
+                <AppIcon name="folder-plus" className="mr-2 h-5 w-5" />
                 创建分组
               </Button>
             </div>
@@ -209,13 +209,13 @@ export function LinkGrid({
   return (
     <section className="mx-auto flex w-full max-w-[110rem] flex-col gap-6 px-2 pb-24 sm:px-3 lg:px-4 lg:pb-28">
       {editMode ? (
-        <div className="flex flex-col gap-3 border-b border-outline/50 pb-4 dark:border-dark-outline/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 border-b border-border/50 pb-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">编辑模式</p>
-            <p className="mt-1 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">点击卡片编辑，拖动卡片调整顺序。</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground ">编辑模式</p>
+            <p className="mt-1 text-sm text-muted-foreground ">点击卡片编辑，拖动卡片调整顺序。</p>
           </div>
           <Button variant="secondary" onClick={onCreateGroup}>
-                        <AppIcon name="folder-plus" className="mr-2 h-4 w-4" />
+            <AppIcon name="folder-plus" className="mr-2 h-4 w-4" />
             新建分组
           </Button>
         </div>
@@ -226,34 +226,52 @@ export function LinkGrid({
         const linkIds = links.map((link) => link.id)
 
         return (
-          <section key={group.id} className="space-y-4 border-b border-outline/40 pb-6 dark:border-dark-outline/50">
+          <section key={group.id} className="space-y-4 border-b border-border/40 pb-6">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   {group.icon ? (
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-low text-primary dark:bg-dark-surface-container/70 dark:text-primary">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
                       <AppIcon name={group.icon} className="h-5 w-5" />
                     </div>
                   ) : null}
                   <div className="min-w-0">
-                    <h2 className="text-lg font-semibold tracking-tight text-primary dark:text-primary">{group.name}</h2>
+                    <h2 className="text-lg font-semibold tracking-tight text-primary ">{group.name}</h2>
                   </div>
                 </div>
                 {editMode ? (
                   <div className="flex flex-wrap items-center gap-2">
-                    <Button variant="ghost" onClick={() => onMoveGroup(group, -1)} disabled={groupIndex === 0} className="min-h-9 px-3 py-1.5 text-xs">
+                    <Button
+                      variant="ghost"
+                      onClick={() => onMoveGroup(group, -1)}
+                      disabled={groupIndex === 0}
+                      className="min-h-9 px-3 py-1.5 text-xs"
+                    >
                       上移
                     </Button>
-                    <Button variant="ghost" onClick={() => onMoveGroup(group, 1)} disabled={groupIndex === sections.length - 1} className="min-h-9 px-3 py-1.5 text-xs">
+                    <Button
+                      variant="ghost"
+                      onClick={() => onMoveGroup(group, 1)}
+                      disabled={groupIndex === sections.length - 1}
+                      className="min-h-9 px-3 py-1.5 text-xs"
+                    >
                       下移
                     </Button>
-                    <Button variant="secondary" onClick={() => onCreateLink(group)} className="min-h-9 px-3 py-1.5 text-xs">
+                    <Button
+                      variant="secondary"
+                      onClick={() => onCreateLink(group)}
+                      className="min-h-9 px-3 py-1.5 text-xs"
+                    >
                       添加链接
                     </Button>
                     <Button variant="ghost" onClick={() => onEditGroup(group)} className="min-h-9 px-3 py-1.5 text-xs">
                       编辑
                     </Button>
-                    <Button variant="danger" onClick={() => onDeleteGroup(group)} className="min-h-9 px-3 py-1.5 text-xs">
+                    <Button
+                      variant="destructive"
+                      onClick={() => onDeleteGroup(group)}
+                      className="min-h-9 px-3 py-1.5 text-xs"
+                    >
                       删除
                     </Button>
                   </div>
@@ -276,7 +294,7 @@ export function LinkGrid({
                     const target = getLinkTarget(link.openMode, openInNewTab)
                     const isDragging = draggingLinkId === link.id
                     const isDragOver = dragOverLinkId === link.id
-                    const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-outline bg-surface transition-[border-color,background-color,transform,box-shadow,opacity] duration-200 dark:border-dark-outline dark:bg-dark-surface ${editMode ? 'hover:border-outline-strong hover:bg-surface-container/60 hover:shadow-card dark:hover:bg-dark-surface-container/60' : 'hover:border-outline-strong hover:bg-surface-container/60 hover:shadow-card dark:hover:bg-dark-surface-container/60'} ${isDragging ? 'scale-[0.98] opacity-60 bg-surface-container dark:bg-dark-surface-container' : ''} ${isDragOver ? 'border-primary ring-1 ring-primary/20 dark:border-accent dark:ring-accent/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
+                    const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-border bg-card transition-[border-color,background-color,transform,box-shadow,opacity] duration-200 hover:border-ring/35 hover:bg-muted/60 hover:shadow-md ${isDragging ? 'scale-[0.98] bg-muted opacity-60' : ''} ${isDragOver ? 'border-primary ring-1 ring-primary/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
 
                     const content = iconOnly ? (
                       <LinkVisual
@@ -296,8 +314,12 @@ export function LinkGrid({
                           fallbackTextClassName={cardDensity === 'compact' ? 'text-lg' : 'text-xl'}
                         />
                         <div className="min-w-0 flex-1 text-left">
-                          <h3 className="truncate text-base font-semibold tracking-tight text-on-background dark:text-dark-on-background sm:text-[1.05rem]">{link.title}</h3>
-                          <p className="mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 text-on-surface-variant dark:text-dark-on-surface-variant">{link.description || link.url}</p>
+                          <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-[1.05rem]">
+                            {link.title}
+                          </h3>
+                          <p className="mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 text-muted-foreground ">
+                            {link.description || link.url}
+                          </p>
                         </div>
                       </>
                     )
@@ -343,9 +365,9 @@ export function LinkGrid({
                   })}
                 </div>
               ) : (
-                <div className="rounded-xl border border-dashed border-outline/45 bg-surface-container-low/45 px-5 py-10 text-center dark:border-dark-outline/55 dark:bg-dark-surface-container/35">
-                  <p className="text-lg font-semibold text-on-background dark:text-dark-on-background">这个分组还没有链接</p>
-                  <p className="mt-2 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">添加第一个链接，开始整理你的常用入口。</p>
+                <div className="rounded-xl border border-dashed border-border/45 bg-secondary/45 px-5 py-10 text-center">
+                  <p className="text-lg font-semibold text-foreground ">这个分组还没有链接</p>
+                  <p className="mt-2 text-sm text-muted-foreground ">添加第一个链接，开始整理你的常用入口。</p>
                   {editMode ? (
                     <div className="mt-5 flex justify-center">
                       <Button variant="secondary" onClick={() => onCreateLink(group)}>

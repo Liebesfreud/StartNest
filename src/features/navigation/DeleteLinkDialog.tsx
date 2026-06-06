@@ -1,5 +1,13 @@
-import { Button } from '../../components/Button'
-import { ConfirmDialog } from '../../components/ConfirmDialog'
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 
 export function DeleteLinkDialog({
   open,
@@ -21,20 +29,22 @@ export function DeleteLinkDialog({
   onConfirm: () => void
 }) {
   return (
-    <ConfirmDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={title}
-      description={description}
-      actions={
-        <div className="flex w-full items-center justify-between gap-3">
-          <div className="min-h-5 text-sm text-red-500">{errorMessage ?? ''}</div>
-          <div className="flex items-center gap-2">
-            <Button variant="secondary" onClick={onCancel} disabled={pending}>取消</Button>
-            <Button variant="danger" onClick={onConfirm} disabled={pending}>{pending ? '删除中' : '删除'}</Button>
-          </div>
-        </div>
-      }
-    />
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
+        <AlertDialogFooter>
+          <AlertDialogCancel onClick={onCancel} disabled={pending}>
+            取消
+          </AlertDialogCancel>
+          <Button variant="destructive" onClick={onConfirm} disabled={pending}>
+            {pending ? '删除中' : '删除'}
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

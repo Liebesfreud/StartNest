@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { api, ApiError, type Group, type GroupCreatePayload, type LinkCreatePayload, type LinkItem, type ReorderPayload } from '../../lib/api'
+import {
+  api,
+  ApiError,
+  type Group,
+  type GroupCreatePayload,
+  type LinkCreatePayload,
+  type LinkItem,
+  type ReorderPayload,
+} from '../../lib/api'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import type { AppOutletContext } from '../../app/App'
 import { PageContainer } from '../../components/layout/PageContainer'
@@ -95,7 +103,9 @@ export function NavigationPage() {
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null)
   const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [coords, setCoords] = useState<{ latitude: number; longitude: number } | null>(null)
-  const [locationStatus, setLocationStatus] = useState<'idle' | 'locating' | 'ready' | 'denied' | 'unsupported' | 'error'>('idle')
+  const [locationStatus, setLocationStatus] = useState<
+    'idle' | 'locating' | 'ready' | 'denied' | 'unsupported' | 'error'
+  >('idle')
   const searchRef = useRef<HTMLInputElement>(null)
 
   const data = bootstrapData
@@ -121,13 +131,17 @@ export function NavigationPage() {
   const searchEngine = settings?.searchEngine ?? 'bing'
   const rawQuery = search.trim()
   const query = rawQuery.toLowerCase()
-  const roundedCoords = coords ? { latitude: roundCoordinate(coords.latitude), longitude: roundCoordinate(coords.longitude) } : null
+  const roundedCoords = coords
+    ? { latitude: roundCoordinate(coords.latitude), longitude: roundCoordinate(coords.longitude) }
+    : null
   const weatherEnabled = settings?.weatherEnabled ?? true
   const weatherAutoLocate = settings?.weatherAutoLocate ?? false
   const temperatureUnit = settings?.temperatureUnit ?? 'system'
   const visibleLinks = useMemo(() => {
     if (!query) return links
-    return links.filter((link) => [link.title, link.url, link.description ?? ''].some((value) => value.toLowerCase().includes(query)))
+    return links.filter((link) =>
+      [link.title, link.url, link.description ?? ''].some((value) => value.toLowerCase().includes(query)),
+    )
   }, [links, query])
 
   const sections = useMemo(() => {
@@ -185,11 +199,12 @@ export function NavigationPage() {
 
   const weatherQuery = useQuery({
     queryKey: ['weather', roundedCoords?.latitude, roundedCoords?.longitude, temperatureUnit],
-    queryFn: () => api.getWeather({
-      latitude: roundedCoords!.latitude,
-      longitude: roundedCoords!.longitude,
-      temperatureUnit,
-    }),
+    queryFn: () =>
+      api.getWeather({
+        latitude: roundedCoords!.latitude,
+        longitude: roundedCoords!.longitude,
+        temperatureUnit,
+      }),
     enabled: weatherEnabled && locationStatus === 'ready' && roundedCoords !== null,
     staleTime: 15 * 60 * 1000,
     retry: 1,
@@ -210,13 +225,17 @@ export function NavigationPage() {
               : weatherQuery.isPending
                 ? { mode: 'loading' as const, message: '正在获取天气...' }
                 : weatherQuery.isError
-                  ? { mode: 'error' as const, message: weatherQuery.error instanceof Error ? weatherQuery.error.message : '天气暂时不可用' }
+                  ? {
+                      mode: 'error' as const,
+                      message: weatherQuery.error instanceof Error ? weatherQuery.error.message : '天气暂时不可用',
+                    }
                   : weatherQuery.data
                     ? { mode: 'ready' as const, data: weatherQuery.data }
                     : { mode: 'idle' as const, message: '天气数据暂不可用' }
 
   const saveGroupMutation = useMutation({
-    mutationFn: async (payload: GroupCreatePayload) => editingGroupId ? api.updateGroup(editingGroupId, payload) : api.createGroup(payload),
+    mutationFn: async (payload: GroupCreatePayload) =>
+      editingGroupId ? api.updateGroup(editingGroupId, payload) : api.createGroup(payload),
     onSuccess: ({ groups: nextGroups }) => {
       update({ groups: nextGroups })
       setGroupDrawerOpen(false)
@@ -226,7 +245,8 @@ export function NavigationPage() {
   })
 
   const saveLinkMutation = useMutation({
-    mutationFn: async (payload: LinkCreatePayload) => editingLinkId ? api.updateLink(editingLinkId, payload) : api.createLink(payload),
+    mutationFn: async (payload: LinkCreatePayload) =>
+      editingLinkId ? api.updateLink(editingLinkId, payload) : api.createLink(payload),
     onSuccess: ({ links: nextLinks }) => {
       update({ links: nextLinks })
       setLinkDrawerOpen(false)
@@ -236,7 +256,8 @@ export function NavigationPage() {
   })
 
   const deleteMutation = useMutation({
-    mutationFn: async (state: NonNullable<typeof deleteState>) => state.type === 'group' ? api.deleteGroup(state.id) : api.deleteLink(state.id),
+    mutationFn: async (state: NonNullable<typeof deleteState>) =>
+      state.type === 'group' ? api.deleteGroup(state.id) : api.deleteLink(state.id),
     onSuccess: (payload) => {
       update(payload)
       setDeleteState(null)
@@ -369,12 +390,20 @@ export function NavigationPage() {
             />
           </div>
           {!hasSearchResults && query ? (
-            <div className="rounded-xl border border-dashed border-outline/70 bg-surface/75 px-5 py-6 text-sm font-medium text-on-surface-variant shadow-sm backdrop-blur dark:border-dark-outline/80 dark:bg-dark-surface/80 dark:text-dark-on-surface-variant">
+            <div className="rounded-xl border border-dashed border-border/70 bg-card/75 px-5 py-6 text-sm font-medium text-muted-foreground shadow-sm backdrop-blur ">
               没找到匹配的链接。按回车或点击搜索可直接搜索互联网。
             </div>
           ) : null}
-          {reorderMutation.error ? <p className="text-sm text-red-500">{getErrorMessage(reorderMutation.error, '排序失败，请稍后重试。')}</p> : null}
-          {updateSettingsMutation.error ? <p className="text-sm text-red-500">{getErrorMessage(updateSettingsMutation.error, '设置更新失败。')}</p> : null}
+          {reorderMutation.error ? (
+            <p className="text-sm text-destructive">
+              {getErrorMessage(reorderMutation.error, '排序失败，请稍后重试。')}
+            </p>
+          ) : null}
+          {updateSettingsMutation.error ? (
+            <p className="text-sm text-destructive">
+              {getErrorMessage(updateSettingsMutation.error, '设置更新失败。')}
+            </p>
+          ) : null}
         </div>
       </PageContainer>
       <LinkGrid
@@ -404,9 +433,11 @@ export function NavigationPage() {
         draft={linkDraft}
         groups={groups}
         pending={saveLinkMutation.isPending}
-        onDraftChange={(next) => setLinkDraft((current) => typeof next === 'function' ? next(current) : next)}
+        onDraftChange={(next) => setLinkDraft((current) => (typeof next === 'function' ? next(current) : next))}
         onSubmit={submitLink}
-        onDelete={editingLinkId ? () => openDeleteLink(editingLinkId, linkDraft.title.trim() || '未命名链接') : undefined}
+        onDelete={
+          editingLinkId ? () => openDeleteLink(editingLinkId, linkDraft.title.trim() || '未命名链接') : undefined
+        }
       />
       <GroupDrawer
         open={groupDrawerOpen && editMode}
@@ -421,21 +452,27 @@ export function NavigationPage() {
         draft={groupDraft}
         pending={saveGroupMutation.isPending}
         errorMessage={saveGroupMutation.error ? getErrorMessage(saveGroupMutation.error, '保存分组失败。') : null}
-        onDraftChange={(next) => setGroupDraft((current) => typeof next === 'function' ? next(current) : next)}
+        onDraftChange={(next) => setGroupDraft((current) => (typeof next === 'function' ? next(current) : next))}
         onSubmit={submitGroup}
       />
       <DeleteLinkDialog
         open={Boolean(deleteState) && editMode}
-        onOpenChange={(open) => { if (!open) setDeleteState(null) }}
+        onOpenChange={(open) => {
+          if (!open) setDeleteState(null)
+        }}
         title={deleteState?.type === 'group' ? '删除分组' : '删除链接'}
-        description={deleteState?.type === 'group' ? `确认删除分组「${deleteState?.title ?? ''}」吗？` : `确认删除链接「${deleteState?.title ?? ''}」吗？`}
+        description={
+          deleteState?.type === 'group'
+            ? `确认删除分组「${deleteState?.title ?? ''}」吗？`
+            : `确认删除链接「${deleteState?.title ?? ''}」吗？`
+        }
         pending={deleteMutation.isPending}
         errorMessage={deleteMutation.error ? getErrorMessage(deleteMutation.error, '删除失败，请稍后重试。') : null}
         onCancel={() => setDeleteState(null)}
         onConfirm={() => deleteState && deleteMutation.mutate(deleteState)}
       />
       <div className="pointer-events-none fixed bottom-8 right-10 z-10 flex flex-col items-end gap-1 opacity-20 transition-opacity hover:opacity-100">
-        <p className="font-label text-[9px] font-bold uppercase tracking-widest text-on-surface-variant dark:text-dark-on-surface-variant">StartNest</p>
+        <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">StartNest</p>
       </div>
     </>
   )

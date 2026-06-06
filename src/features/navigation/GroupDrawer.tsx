@@ -1,6 +1,8 @@
-import { Button } from '../../components/Button'
-import { Drawer } from '../../components/Drawer'
-import { Input } from '../../components/Input'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
 export type GroupDraft = {
   name: string
@@ -31,27 +33,41 @@ export function GroupDrawer({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange} title={title}>
-      <div className="space-y-5">
-        <div className="space-y-3">
-          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant dark:text-dark-on-surface-variant">基础信息</p>
-          <Input
-            value={draft.name}
-            onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
-            placeholder="分组名称"
-          />
-          <Input
-            value={draft.icon}
-            onChange={(event) => setDraft((current) => ({ ...current, icon: event.target.value }))}
-            placeholder="图标名（如：folder、plane、brand-github）"
-          />
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent className="w-[min(100vw,30rem)] overflow-y-auto sm:max-w-md">
+        <SheetHeader>
+          <SheetTitle>{title}</SheetTitle>
+        </SheetHeader>
+        <div className="mt-6 space-y-5">
+          <div className="space-y-3">
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">基础信息</p>
+            <Label htmlFor="group-name">分组名称</Label>
+            <Input
+              id="group-name"
+              value={draft.name}
+              onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))}
+              placeholder="分组名称"
+            />
+            <Label htmlFor="group-icon">图标</Label>
+            <Input
+              id="group-icon"
+              value={draft.icon}
+              onChange={(event) => setDraft((current) => ({ ...current, icon: event.target.value }))}
+              placeholder="图标名（如：folder、plane、brand-github）"
+            />
+          </div>
+          {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
+          <Separator />
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={pending}>
+              取消
+            </Button>
+            <Button onClick={onSubmit} disabled={pending}>
+              {pending ? '保存中' : title === '编辑分组' ? '保存' : '创建'}
+            </Button>
+          </div>
         </div>
-        {errorMessage ? <p className="text-sm text-red-500">{errorMessage}</p> : null}
-        <div className="flex justify-end gap-2 border-t border-outline/50 pt-4 dark:border-dark-outline/60">
-          <Button variant="secondary" onClick={() => onOpenChange(false)} disabled={pending}>取消</Button>
-          <Button onClick={onSubmit} disabled={pending}>{pending ? '保存中' : title === '编辑分组' ? '保存' : '创建'}</Button>
-        </div>
-      </div>
-    </Drawer>
+      </SheetContent>
+    </Sheet>
   )
 }

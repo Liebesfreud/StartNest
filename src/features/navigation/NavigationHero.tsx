@@ -27,11 +27,7 @@ type WeatherState =
       }
     }
 
-export function NavigationHero({
-  weather,
-}: {
-  weather: WeatherState
-}) {
+export function NavigationHero({ weather }: { weather: WeatherState }) {
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
@@ -42,29 +38,32 @@ export function NavigationHero({
   const timeText = clockFormatter.format(now)
   const dateText = dateFormatter.format(now)
 
-  const weatherNode = weather.mode === 'hidden'
-    ? null
-    : weather.mode === 'ready'
-      ? (
-          <div className="flex items-center gap-2">
-            <AppIcon name={weather.data.icon} className="h-[17px] w-[17px] text-primary/70 dark:text-primary/80" />
-            <span className="font-headline text-lg font-light text-on-background dark:text-dark-on-background">{Math.round(weather.data.temperature)}°{weather.data.unit}</span>
-            <span className="font-label text-xs uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">{weather.data.locationName ? `${weather.data.locationName} / ${weather.data.condition}` : weather.data.condition}</span>
-          </div>
-        )
-      : (
-          <div className="flex items-center gap-2 text-on-surface-variant dark:text-dark-on-surface-variant">
-            <AppIcon name="aperture" className="h-[17px] w-[17px] text-primary/60 dark:text-primary/70" />
-            <span className="font-label text-xs uppercase tracking-[0.18em]">{weather.message}</span>
-          </div>
-        )
+  const weatherNode =
+    weather.mode === 'hidden' ? null : weather.mode === 'ready' ? (
+      <div className="flex items-center gap-2">
+        <AppIcon name={weather.data.icon} className="h-[17px] w-[17px] text-primary/70" />
+        <span className="text-lg font-light text-foreground">
+          {Math.round(weather.data.temperature)}°{weather.data.unit}
+        </span>
+        <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+          {weather.data.locationName
+            ? `${weather.data.locationName} / ${weather.data.condition}`
+            : weather.data.condition}
+        </span>
+      </div>
+    ) : (
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <AppIcon name="aperture" className="h-[17px] w-[17px] text-primary/60" />
+        <span className="text-xs uppercase tracking-[0.18em]">{weather.message}</span>
+      </div>
+    )
 
   return (
     <header className="flex flex-col items-center text-center">
-      <h1 className="font-headline text-6xl font-normal leading-none tracking-tight text-on-background dark:text-dark-on-background">{timeText}</h1>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-on-surface-variant dark:text-dark-on-surface-variant">
-        <span className="font-label text-xs font-medium uppercase tracking-[0.18em]">{dateText}</span>
-        {weatherNode ? <span className="hidden h-1 w-1 rounded-full bg-on-surface-variant/30 dark:bg-dark-on-surface-variant/40 sm:block" /> : null}
+      <h1 className="text-6xl font-semibold leading-none tracking-tight text-foreground">{timeText}</h1>
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-muted-foreground">
+        <span className="text-xs font-medium uppercase tracking-[0.18em]">{dateText}</span>
+        {weatherNode ? <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/30 sm:block" /> : null}
         {weatherNode}
       </div>
     </header>

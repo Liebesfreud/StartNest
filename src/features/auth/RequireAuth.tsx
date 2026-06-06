@@ -13,8 +13,8 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background dark:bg-dark-background">
-        <div className="flex items-center gap-2 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">
+      <div className="flex min-h-screen items-center justify-center bg-background ">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground ">
           <AppIcon name="aperture" className="h-4 w-4 animate-spin" />
           正在验证...
         </div>

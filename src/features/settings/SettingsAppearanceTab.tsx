@@ -1,8 +1,16 @@
 import type { Settings } from '../../lib/api'
 import { AppIcon } from '../../components/AppIcon'
-import { Button } from '../../components/Button'
-import { Input } from '../../components/Input'
-import { NumberControl, SettingToggleCard, SegmentedControl, saveSetting, normalizeNumberSetting } from './settingsControls'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  NumberControl,
+  SettingToggleCard,
+  SegmentedControl,
+  saveSetting,
+  normalizeNumberSetting,
+} from './settingsControls'
 
 type SettingsAppearanceTabProps = {
   settings: Settings
@@ -54,21 +62,21 @@ export function SettingsAppearanceTab({
         checked={settings.showGroupIcons}
         onToggle={() => saveSetting(onSaveSetting, 'showGroupIcons', !settings.showGroupIcons)}
       />
-      <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
+      <Card className="px-4 py-4">
         <div className="flex items-start gap-3">
-          <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
+          <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground">
             <AppIcon name="wallpaper" className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">全局壁纸</p>
+            <Label htmlFor="settings-wallpaper-url">全局壁纸</Label>
             <div className="mt-3 space-y-3">
               <Input
+                id="settings-wallpaper-url"
                 type="url"
                 inputMode="url"
                 value={wallpaperDraft}
                 onChange={(event) => onWallpaperChange(event.target.value)}
                 placeholder="https://example.com/wallpaper.jpg"
-                className="min-h-11"
               />
               <div className="flex flex-wrap gap-2">
                 <Button onClick={onSaveWallpaper} disabled={pending}>
@@ -78,11 +86,11 @@ export function SettingsAppearanceTab({
                   清空壁纸
                 </Button>
               </div>
-              {wallpaperError ? <p className="text-sm text-red-500">{wallpaperError}</p> : null}
+              {wallpaperError ? <p className="text-sm text-destructive">{wallpaperError}</p> : null}
             </div>
           </div>
         </div>
-      </div>
+      </Card>
       <NumberControl
         icon="droplet"
         title="背景遮罩强度"
@@ -91,7 +99,9 @@ export function SettingsAppearanceTab({
         max={100}
         suffix="%"
         disabled={!settings.wallpaperUrl}
-        onChange={(value) => saveSetting(onSaveSetting, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))}
+        onChange={(value) =>
+          saveSetting(onSaveSetting, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))
+        }
       />
       <NumberControl
         icon="aperture"

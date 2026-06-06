@@ -6,6 +6,8 @@ import { AppIcon } from '../../components/AppIcon'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { AppOutletContext } from '../../app/App'
 import { SettingsAdminTab } from './SettingsAdminTab'
 import { SettingsAppearanceTab } from './SettingsAppearanceTab'
@@ -26,11 +28,14 @@ const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = 
 function SettingSection({ icon, title, children }: { icon: string; title: string; children: ReactNode }) {
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2 border-b border-outline pb-2 dark:border-dark-outline">
-        <AppIcon name={icon} className="h-[18px] w-[18px] text-primary dark:text-primary" />
-        <div className="min-w-0">
-          <h2 className="font-headline text-lg font-normal tracking-tight text-on-background dark:text-dark-on-background sm:text-xl">{title}</h2>
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <AppIcon name={icon} className="h-[18px] w-[18px] text-primary" />
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{title}</h2>
+          </div>
         </div>
+        <Separator />
       </div>
       <div className="space-y-3">{children}</div>
     </section>
@@ -65,7 +70,9 @@ export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [nameDraft, setNameDraft] = useState('')
   const [wallpaperDraft, setWallpaperDraft] = useState('')
-  const [settingsDraft, setSettingsDraft] = useState<Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>>({})
+  const [settingsDraft, setSettingsDraft] = useState<
+    Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>
+  >({})
   const [wallpaperError, setWallpaperError] = useState<string | null>(null)
   const [importError, setImportError] = useState<string | null>(null)
   const { update } = useBootstrapCache()
@@ -115,9 +122,11 @@ export function SettingsPage() {
     return () => window.clearTimeout(timer)
   }, [data, settingsDraft, updateSettings])
 
-  const previewSettings = useMemo(() => data ? { ...data.settings, ...settingsDraft } : null, [data, settingsDraft])
+  const previewSettings = useMemo(() => (data ? { ...data.settings, ...settingsDraft } : null), [data, settingsDraft])
 
-  const handleSaveSetting = (payload: Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>) => {
+  const handleSaveSetting = (
+    payload: Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>,
+  ) => {
     update((current) => ({
       ...current,
       settings: {
@@ -212,40 +221,34 @@ export function SettingsPage() {
   return (
     <PageContainer className="py-6 lg:py-8">
       <div className="space-y-6 lg:space-y-7">
-        <header className="border-b border-outline pb-5 dark:border-dark-outline">
+        <header className="border-b pb-5">
           <div className="min-w-0 max-w-3xl">
-            <p className="font-headline text-[13px] italic text-on-surface-variant dark:text-dark-on-surface-variant">StartNest Settings</p>
-            <h1 className="mt-1 font-headline text-3xl font-medium tracking-tight text-on-background dark:text-dark-on-background sm:text-[2.5rem]">个性化设置</h1>
-            <p className="mt-3 text-sm leading-6 text-on-surface-variant dark:text-dark-on-surface-variant">
+            <p className="text-[13px] font-medium text-muted-foreground">StartNest Settings</p>
+            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-[2.5rem]">个性化设置</h1>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
               在更克制的界面里统一管理主题、导航行为、天气信息与数据备份。
             </p>
           </div>
         </header>
 
-        <section>
-          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SettingsTab)}>
+          <TabsList className="h-auto max-w-full justify-start overflow-x-auto bg-transparent p-0 scrollbar-hide">
             {settingTabs.map((tab) => {
-              const isActive = tab.value === activeTab
               return (
-                <button
-                  key={tab.value}
-                  type="button"
-                  onClick={() => setActiveTab(tab.value)}
-                  className={`min-w-fit border-b-[2px] px-3.5 py-2.5 text-sm font-medium transition ${isActive ? 'border-primary text-on-background dark:border-accent dark:text-dark-on-background' : 'border-transparent text-on-surface-variant hover:text-on-background dark:text-dark-on-surface-variant dark:hover:text-dark-on-background'}`}
-                >
-                  <span className="inline-flex items-center gap-2 whitespace-nowrap">
-                    <AppIcon name={tab.icon} className="h-[18px] w-[18px]" />
-                    {tab.label}
-                  </span>
-                </button>
+                <TabsTrigger key={tab.value} value={tab.value} className="min-w-fit gap-2">
+                  <AppIcon name={tab.icon} className="h-[18px] w-[18px]" />
+                  {tab.label}
+                </TabsTrigger>
               )
             })}
-          </div>
-        </section>
+          </TabsList>
+        </Tabs>
 
         <div className="space-y-5">
           <SettingSection icon={currentTab.icon} title={currentTab.label}>
-            {activeTab === 'general' ? <SettingsGeneralTab settings={settings} onSaveSetting={handleSaveSetting} /> : null}
+            {activeTab === 'general' ? (
+              <SettingsGeneralTab settings={settings} onSaveSetting={handleSaveSetting} />
+            ) : null}
             {activeTab === 'appearance' ? (
               <SettingsAppearanceTab
                 settings={settings}
@@ -258,11 +261,14 @@ export function SettingsPage() {
                 onSaveSetting={handleSaveSetting}
               />
             ) : null}
-            {activeTab === 'panels' ? (
-              <SettingsPanelsTab panels={data.panels} />
-            ) : null}
+            {activeTab === 'panels' ? <SettingsPanelsTab panels={data.panels} /> : null}
             {activeTab === 'data' ? (
-              <SettingsDataTab importPending={importMutation.isPending} importError={importError} onExport={handleExport} onImportFile={handleImportFile} />
+              <SettingsDataTab
+                importPending={importMutation.isPending}
+                importError={importError}
+                onExport={handleExport}
+                onImportFile={handleImportFile}
+              />
             ) : null}
             {activeTab === 'admin' ? (
               <SettingsAdminTab

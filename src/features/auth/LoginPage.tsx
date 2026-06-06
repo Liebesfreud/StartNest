@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../lib/auth'
 import { applyTheme, readStoredThemeMode } from '../../lib/theme'
-import { AppIcon } from '../../components/AppIcon'
-import { Button } from '../../components/Button'
-import { Input } from '../../components/Input'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export function LoginPage() {
   const { isAuthenticated, isLoading, login } = useAuth()
@@ -56,102 +58,77 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4 dark:bg-dark-background">
-      {/* Ambient decorative elements */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -left-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-primary/[0.04] blur-3xl dark:bg-primary/[0.06]" />
-        <div className="absolute -bottom-40 -right-40 h-[36rem] w-[36rem] rounded-full bg-accent/[0.03] blur-3xl dark:bg-accent/[0.05]" />
-      </div>
-
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 text-foreground">
       <div className="relative z-10 w-full max-w-[26rem]">
-        {/* Brand */}
         <div className="mb-10 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-outline/60 bg-surface shadow-sm dark:border-dark-outline/60 dark:bg-dark-surface">
-            <span className="font-headline text-xl font-semibold tracking-[0.18em] text-on-background dark:text-dark-on-background">SN</span>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border bg-card shadow-sm">
+            <span className="font-semibold tracking-[0.18em] text-foreground">SN</span>
           </div>
-          <h1 className="font-headline text-3xl font-normal italic tracking-tight text-on-background dark:text-dark-on-background sm:text-4xl">
-            StartNest
-          </h1>
-          <p className="mt-2 font-label text-xs uppercase tracking-[0.18em] text-on-surface-variant dark:text-dark-on-surface-variant">
-            私人起始页 · 书签工作台
-          </p>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">StartNest</h1>
+          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">私人起始页 · 书签工作台</p>
         </div>
 
-        {/* Card */}
-        <div className="card-panel rounded-xl p-6 sm:p-8">
-          <div className="mb-6 border-b border-outline pb-4 dark:border-dark-outline">
-            <h2 className="font-headline text-xl font-medium tracking-tight text-on-background dark:text-dark-on-background">
-              登录
-            </h2>
-            <p className="mt-1 text-sm text-on-surface-variant dark:text-dark-on-surface-variant">
-              输入管理员账户信息以继续。
-            </p>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-            <div className="space-y-1.5">
-              <label htmlFor="login-username" className="block text-sm font-medium text-on-surface dark:text-dark-on-surface">
-                用户名
-              </label>
-              <Input
-                id="login-username"
-                type="text"
-                autoComplete="username"
-                placeholder="输入管理员用户名"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                disabled={isLoading}
-              />
-            </div>
-
-            {/* Password */}
-            <div className="space-y-1.5">
-              <label htmlFor="login-password" className="block text-sm font-medium text-on-surface dark:text-dark-on-surface">
-                密码
-              </label>
-              <div className="relative">
+        <Card>
+          <CardHeader>
+            <CardTitle>登录</CardTitle>
+            <CardDescription>输入管理员账户信息以继续。</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+              <div className="space-y-1.5">
+                <Label htmlFor="login-username">用户名</Label>
                 <Input
-                  id="login-password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  placeholder="输入密码"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="login-username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="输入管理员用户名"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   disabled={isLoading}
-                  className="pr-11"
                 />
-                <button
-                  type="button"
-                  tabIndex={-1}
-                  aria-label={showPassword ? '隐藏密码' : '显示密码'}
-                  onClick={() => setShowPassword((v) => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant/60 transition-colors hover:text-on-surface-variant dark:text-dark-on-surface-variant/60 dark:hover:text-dark-on-surface-variant"
-                >
-                  <AppIcon name={showPassword ? 'aperture' : 'password'} className="h-[18px] w-[18px]" />
-                </button>
               </div>
-            </div>
 
-            {/* Error */}
-            {error ? (
-              <div className="rounded-xl border border-red-200 bg-red-50/80 px-4 py-3 text-sm text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400">
-                {error}
+              <div className="space-y-1.5">
+                <Label htmlFor="login-password">密码</Label>
+                <div className="relative">
+                  <Input
+                    id="login-password"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="current-password"
+                    placeholder="输入密码"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={isLoading}
+                    className="pr-11"
+                  />
+                  <Button
+                    type="button"
+                    tabIndex={-1}
+                    aria-label={showPassword ? '隐藏密码' : '显示密码'}
+                    onClick={() => setShowPassword((v) => !v)}
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                </div>
               </div>
-            ) : null}
 
-            {/* Submit */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? '正在登录...' : '登录'}
-            </Button>
-          </form>
-        </div>
+              {error ? (
+                <div className="rounded-md border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {error}
+                </div>
+              ) : null}
 
-        {/* Footer whisper */}
-        <p className="mt-8 text-center font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/40 dark:text-dark-on-surface-variant/40">
+              <Button type="submit" disabled={isLoading} className="w-full">
+                {isLoading ? '正在登录...' : '登录'}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <p className="mt-8 text-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
           StartNest · Private Startpage
         </p>
       </div>

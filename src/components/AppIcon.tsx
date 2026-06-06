@@ -141,11 +141,7 @@ type AppIconProps = Omit<IconProps, 'ref'> & {
 }
 
 export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconProps) {
-  const {
-    className,
-    stroke: _stroke,
-    ...restProps
-  } = props
+  const { className, stroke: _stroke, ...restProps } = props
   const trimmedName = name?.trim()
   const resolvedIcon = trimmedName ? resolveIcon(trimmedName, fallback) : fallback
   const hasLocalIcon = !trimmedName || resolvedIcon !== fallback
@@ -157,7 +153,7 @@ export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconPr
         <span
           role="img"
           aria-hidden="true"
-          className={["inline-block bg-current text-primary dark:text-dark-on-surface", className].filter(Boolean).join(' ')}
+          className={['inline-block bg-current text-current', className].filter(Boolean).join(' ')}
           style={{
             mask: `url(${namedIconUrl}) center / contain no-repeat`,
             WebkitMask: `url(${namedIconUrl}) center / contain no-repeat`,
@@ -173,7 +169,7 @@ export function AppIcon({ name, fallback = IconHelpCircle, ...props }: AppIconPr
     <IconComponent
       aria-hidden="true"
       stroke={1.8}
-      className={["text-primary dark:text-dark-on-surface", className].filter(Boolean).join(' ')}
+      className={['text-current', className].filter(Boolean).join(' ')}
       {...restProps}
     />
   )

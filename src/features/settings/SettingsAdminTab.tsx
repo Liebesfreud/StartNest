@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import type { User } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { AppIcon } from '../../components/AppIcon'
-import { Button } from '../../components/Button'
-import { Input } from '../../components/Input'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 type SettingsAdminTabProps = {
   user: User
@@ -29,7 +31,7 @@ function LogoutButton() {
   }
 
   return (
-    <Button variant="danger" onClick={handleLogout} disabled={pending}>
+    <Button variant="destructive" onClick={handleLogout} disabled={pending}>
       {pending ? '退出中...' : '退出'}
     </Button>
   )
@@ -47,63 +49,69 @@ export function SettingsAdminTab({
 }: SettingsAdminTabProps) {
   return (
     <>
-      <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
+      <Card className="px-4 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex shrink-0 items-center justify-center text-primary dark:text-primary">
+          <div className="flex shrink-0 items-center justify-center text-primary">
             <AppIcon name="user-circle" className="h-10 w-10" />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-on-surface dark:text-dark-on-surface">{displayName}</p>
-            <p className="truncate text-sm text-on-surface-variant dark:text-dark-on-surface-variant">{user.subject.replace(/^admin:/, '')}</p>
+            <p className="truncate text-sm font-semibold text-foreground">{displayName}</p>
+            <p className="truncate text-sm text-muted-foreground">{user.subject.replace(/^admin:/, '')}</p>
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
+      <Card className="px-4 py-4">
         <div className="flex items-start gap-3">
-          <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
+          <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground">
             <AppIcon name="badge" className="h-[18px] w-[18px]" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">显示名称</p>
-            <p className="mt-1 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">仅在 StartNest 内显示，不会修改登录系统中的姓名。</p>
+            <Label htmlFor="settings-display-name">显示名称</Label>
+            <p className="mt-1 text-xs text-muted-foreground">仅在 StartNest 内显示，不会修改登录系统中的姓名。</p>
             <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-              <Input value={nameDraft} onChange={(event) => onNameDraftChange(event.target.value)} placeholder="请输入显示名称" className="min-h-11 flex-1" />
+              <Input
+                id="settings-display-name"
+                value={nameDraft}
+                onChange={(event) => onNameDraftChange(event.target.value)}
+                placeholder="请输入显示名称"
+                className="flex-1"
+              />
               <Button onClick={onSaveName} disabled={updatePending || !canSaveName} className="sm:self-start">
                 {updatePending ? '保存中' : '保存'}
               </Button>
             </div>
-            {updateError ? <p className="mt-3 text-sm text-red-500">{updateError}</p> : null}
+            {updateError ? <p className="mt-3 text-sm text-destructive">{updateError}</p> : null}
           </div>
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-outline bg-surface px-4 py-4 dark:border-dark-outline dark:bg-dark-surface">
+      <Card className="px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
+            <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground">
               <AppIcon name="password" className="h-[18px] w-[18px]" />
             </div>
-            <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">密码</p>
+            <p className="text-sm font-semibold text-foreground">密码</p>
           </div>
-          <span className="text-xs text-on-surface-variant dark:text-dark-on-surface-variant">由登录系统管理</span>
+          <span className="text-xs text-muted-foreground">由登录系统管理</span>
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-xl border border-red-200/60 bg-red-50/40 px-4 py-4 dark:border-red-900/30 dark:bg-red-950/20">
+      <Card className="border-destructive/25 bg-destructive/5 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-on-surface-variant dark:text-dark-on-surface-variant">
+            <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground">
               <AppIcon name="logout" className="h-[18px] w-[18px]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-on-surface dark:text-dark-on-surface">退出登录</p>
-              <p className="mt-0.5 text-xs text-on-surface-variant dark:text-dark-on-surface-variant">清除本地会话并返回登录页面。</p>
+              <p className="text-sm font-semibold text-foreground">退出登录</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">清除本地会话并返回登录页面。</p>
             </div>
           </div>
           <LogoutButton />
         </div>
-      </div>
+      </Card>
     </>
   )
 }

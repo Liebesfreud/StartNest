@@ -25,7 +25,7 @@ const LoginPage = lazy(async () => {
 
 function RouteFallback() {
   return (
-    <div className="mx-auto flex w-full max-w-[60rem] items-center justify-center px-4 py-24 text-sm text-on-surface-variant dark:text-dark-on-surface-variant sm:px-6 lg:px-8">
+    <div className="mx-auto flex w-full max-w-[60rem] items-center justify-center px-4 py-24 text-sm text-muted-foreground sm:px-6 lg:px-8">
       正在加载页面...
     </div>
   )
