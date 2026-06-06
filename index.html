@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#F9F8F6" />
+    <meta name="theme-color" content="#ffffff" />
     <title>StartNest</title>
     <style>
       :root {
         color-scheme: light;
-        background-color: #F9F8F6;
-        color: #2f3331;
+        background-color: #ffffff;
+        color: #0a0a0a;
       }
 
       :root.dark {
         color-scheme: dark;
-        background-color: #181716;
-        color: #E2DFD8;
+        background-color: #0b0b0b;
+        color: #fafafa;
       }
 
       html,
@@ -29,8 +29,8 @@
     <script>
       ;(() => {
         const storageKey = 'startnest:theme-mode'
-        const darkThemeColor = '#181716'
-        const lightThemeColor = '#F9F8F6'
+        const darkThemeColor = '#0b0b0b'
+        const lightThemeColor = '#ffffff'
 
         const resolveTheme = (mode) => {
           if (mode === 'dark') return 'dark'
@@ -59,7 +59,7 @@
       })()
     </script>
   </head>
-  <body class="bg-[#F9F8F6] text-[#2f3331] antialiased selection:bg-primary/20 min-h-screen dark:bg-dark-background dark:text-dark-on-background">
+  <body class="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

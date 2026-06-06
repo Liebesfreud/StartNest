@@ -4,7 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from 'react-router-dom'
 import { AuthProvider } from './lib/auth'
 import { router } from './app/router'
+import { applyTheme, readPreferredThemeMode } from './lib/theme'
 import './styles.css'
+
+applyTheme(readPreferredThemeMode())
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

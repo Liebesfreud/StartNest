@@ -144,7 +144,7 @@ export function PanelKeepAliveHost({
             key={`${cachedPanel.id}:${reloadKeys[cachedPanel.id] ?? 0}`}
             src={cachedPanel.url}
             title={cachedPanel.title}
-            className={`min-h-[calc(100vh-4.25rem)] flex-1 border-0 bg-white ${isActive ? 'block' : 'hidden'}`}
+            className={`min-h-[calc(100vh-4.25rem)] flex-1 border-0 bg-background ${isActive ? 'block' : 'hidden'}`}
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"
             referrerPolicy="no-referrer"
           />

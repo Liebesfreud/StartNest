@@ -1,13 +1,12 @@
 import { CSSProperties, ReactNode } from 'react'
 import { AppIcon } from '../AppIcon'
-import type { ThemeMode } from '../../lib/theme'
 import { SideNavBar } from './SideNavBar'
 
 interface LayoutProps {
   children: ReactNode
   activeOverlay?: ReactNode
   activeOverlayVisible?: boolean
-  themeMode?: ThemeMode
+  themeMode?: 'light' | 'dark'
   wallpaperUrl?: string | null
   wallpaperOverlayOpacity?: number
   wallpaperBlur?: number
@@ -62,7 +61,7 @@ export function Layout({
             aria-label="显示侧边栏"
             aria-pressed={false}
             onClick={onToggleSidebar}
-            className="fixed left-6 top-6 z-40 hidden h-11 w-11 items-center justify-center rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 md:flex "
+            className="fixed left-6 top-6 z-40 hidden h-11 w-11 items-center justify-center rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 md:flex "
           >
             <AppIcon name="menu-2" className="h-5 w-5" />
           </button>
@@ -79,7 +78,7 @@ export function Layout({
           <div className="pointer-events-none fixed inset-x-0 top-0 z-50 h-0.5 bg-primary/70" aria-hidden="true" />
         ) : null}
         <main
-          className={`min-h-screen w-full transition-[padding,opacity] duration-200 ${sidebarVisible ? 'md:pl-24' : 'md:pl-0'} ${bootstrapLoading ? 'opacity-80' : 'opacity-100'}`}
+          className={`min-h-screen w-full transition-[padding,opacity] duration-200 ${sidebarVisible ? 'md:pl-24' : 'md:pl-20'} ${bootstrapLoading ? 'opacity-80' : 'opacity-100'}`}
         >
           {bootstrapError ? (
             <div className="mx-auto flex min-h-screen w-full max-w-[32rem] items-center justify-center px-6 py-16 text-center">

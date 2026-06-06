@@ -2,11 +2,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AppIcon } from '../AppIcon'
 import { useAuth } from '../../lib/auth'
 import { useBootstrapQuery } from '../../hooks/useBootstrap'
-import type { ThemeMode } from '../../lib/theme'
 import { navigationItems } from './navigationItems'
 
 interface SideNavBarProps {
-  themeMode?: ThemeMode
+  themeMode?: 'light' | 'dark'
   onToggleTheme: () => void
   editMode: boolean
   onToggleEditMode: () => void
@@ -15,7 +14,7 @@ interface SideNavBarProps {
 }
 
 export function SideNavBar({
-  themeMode = 'system',
+  themeMode = 'light',
   onToggleTheme,
   editMode,
   onToggleEditMode,
@@ -28,7 +27,7 @@ export function SideNavBar({
   const { data } = useBootstrapQuery()
   const panels = (data?.panels ?? []).filter((panel) => panel.enabled)
   const itemClassName = (active: boolean) =>
-    `flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 [&_svg]:!text-current [&_span]:!text-current ${active ? 'bg-primary text-primary-foreground ' : 'text-muted-foreground hover:bg-secondary hover:text-foreground '}`
+    `flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 [&_svg]:!text-current [&_span]:!text-current ${active ? 'bg-primary text-primary-foreground ' : 'text-muted-foreground hover:bg-secondary hover:text-foreground '}`
 
   return (
     <aside
@@ -40,7 +39,7 @@ export function SideNavBar({
           aria-label="隐藏侧边栏"
           aria-pressed={visible}
           onClick={onToggleVisible}
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 "
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 "
         >
           <AppIcon name="layout-sidebar-left-collapse" className="h-5 w-5" />
         </button>
@@ -97,7 +96,7 @@ export function SideNavBar({
               await logout()
               navigate('/login', { replace: true })
             }}
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-red-50 hover:text-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/20 dark:hover:bg-red-950/30 dark:hover:text-red-400 [&_svg]:!text-current [&_span]:!text-current"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive/20 [&_svg]:!text-current [&_span]:!text-current"
           >
             <AppIcon name="logout" className="h-5 w-5" />
           </button>
@@ -105,7 +104,7 @@ export function SideNavBar({
             type="button"
             aria-label={themeMode === 'dark' ? '切换到日间模式' : '切换到夜间模式'}
             onClick={onToggleTheme}
-            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 [&_svg]:!text-current [&_span]:!text-current"
+            className="flex h-11 w-11 items-center justify-center rounded-xl text-muted-foreground transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 [&_svg]:!text-current [&_span]:!text-current"
           >
             <AppIcon name={themeMode === 'dark' ? 'sun' : 'moon'} className="h-5 w-5" />
           </button>
@@ -114,7 +113,7 @@ export function SideNavBar({
             aria-label="切换编辑模式"
             aria-pressed={editMode}
             onClick={onToggleEditMode}
-            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#99462a]/20 [&_svg]:!text-current [&_span]:!text-current ${editMode ? 'bg-secondary text-primary ' : 'text-muted-foreground hover:bg-secondary hover:text-foreground '}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 [&_svg]:!text-current [&_span]:!text-current ${editMode ? 'bg-secondary text-primary ' : 'text-muted-foreground hover:bg-secondary hover:text-foreground '}`}
           >
             <AppIcon name="pencil-cog" className="h-5 w-5" />
           </button>

@@ -5,7 +5,7 @@ import { Layout } from '../components/layout/Layout'
 import { PanelKeepAliveHost } from '../features/panels/PanelKeepAliveHost'
 import { useBootstrapCache, useBootstrapQuery } from '../hooks/useBootstrap'
 import { api, type BootstrapData } from '../lib/api'
-import { applyTheme, resolveTheme } from '../lib/theme'
+import { applyTheme, watchThemeMode } from '../lib/theme'
 
 export type AppOutletContext = {
   editMode: boolean
@@ -22,22 +22,26 @@ export function App() {
   const { update } = useBootstrapCache()
   const [editMode, setEditMode] = useState(false)
   const [sidebarVisible, setSidebarVisible] = useState(false)
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
+  )
 
   useEffect(() => {
-    if (data) applyTheme(data.settings.themeMode)
-  }, [data])
+    if (!data) return
+    return watchThemeMode(data.settings.themeMode, setResolvedTheme)
+  }, [data?.settings.themeMode])
 
   const updateSettingsMutation = useMutation({
     mutationFn: api.updateSettings,
     onSuccess: ({ settings }) => {
       update({ settings })
-      applyTheme(settings.themeMode)
+      setResolvedTheme(applyTheme(settings.themeMode))
     },
   })
 
   const handleToggleTheme = () => {
     if (!data) return
-    const nextTheme = resolveTheme(data.settings.themeMode) === 'dark' ? 'light' : 'dark'
+    const nextTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
     updateSettingsMutation.mutate({ themeMode: nextTheme })
   }
 
@@ -45,7 +49,7 @@ export function App() {
     <Layout
       activeOverlay={<PanelKeepAliveHost bootstrapData={data} activePanelId={activePanelId} />}
       activeOverlayVisible={!!activePanelId}
-      themeMode={data?.settings.themeMode}
+      themeMode={resolvedTheme}
       wallpaperUrl={data?.settings.wallpaperUrl}
       wallpaperOverlayOpacity={data?.settings.wallpaperOverlayOpacity}
       wallpaperBlur={data?.settings.wallpaperBlur}
@@ -68,4 +72,3 @@ export function App() {
     </Layout>
   )
 }
-

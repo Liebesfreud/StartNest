@@ -1,18 +1,26 @@
-import { useState, type CSSProperties, type DragEvent } from 'react'
+import { useState, type DragEvent } from 'react'
 import { AppIcon } from '../../components/AppIcon'
 import type { Group, LinkItem } from '../../lib/api'
 import { getFaviconUrl } from '../../lib/favicon'
 import { Button } from '@/components/ui/button'
+import {
+  customLinkCardIconBackgroundClassName,
+  customLinkCardIconBorderClassName,
+  customLinkCardMutedTextClassName,
+  customLinkCardTextClassName,
+  getLinkCardStyle,
+  hasCustomLinkCardBackground,
+} from './linkCardTheme'
 
 type GroupSection = {
   group: Group
   links: LinkItem[]
 }
 
-function renderTextFallback(text: string, sizeClass: string, textClassName = 'text-sm') {
+function renderTextFallback(text: string, sizeClass: string, textClassName = 'text-sm', customBackground = false) {
   return (
     <div
-      className={`${sizeClass} flex items-center justify-center rounded-xl bg-secondary text-primary ${textClassName} font-bold`}
+      className={`${sizeClass} flex items-center justify-center rounded-xl ${customBackground ? `${customLinkCardIconBackgroundClassName} ${customLinkCardTextClassName}` : 'bg-secondary text-primary'} ${textClassName} font-bold`}
     >
       {text.trim().slice(0, 2).toUpperCase() || '?'}
     </div>
@@ -29,11 +37,6 @@ function getTileClassName(tileSize: '1x1' | '1x3', density: 'compact' | 'comfort
   return density === 'compact'
     ? 'col-span-3 row-span-1 flex h-full w-full items-center gap-2 px-2 py-2 text-left'
     : 'col-span-3 row-span-1 flex h-full w-full items-center gap-2.5 px-2.5 py-2.5 text-left'
-}
-
-function getCardStyle(backgroundColor: string | null): CSSProperties | undefined {
-  if (!backgroundColor) return undefined
-  return { backgroundColor }
 }
 
 function getLinkTarget(openMode: 'global' | 'same-tab' | 'new-tab', openInNewTab: boolean) {
@@ -70,8 +73,9 @@ function LinkVisual({
   const [imageFailed, setImageFailed] = useState(false)
   const faviconUrl = getFaviconUrl(link.url)
   const fallbackText = link.iconText || link.title.slice(0, 2) || '?'
-  const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary`
-  const fallbackIconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border/60 bg-muted shadow-sm`
+  const customBackground = hasCustomLinkCardBackground(link.backgroundColor)
+  const iconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl ${customBackground ? customLinkCardIconBackgroundClassName : 'bg-secondary'}`
+  const fallbackIconFrameClassName = `${iconClassName} flex shrink-0 items-center justify-center overflow-hidden rounded-xl border shadow-sm ${customBackground ? `${customLinkCardIconBackgroundClassName} ${customLinkCardIconBorderClassName}` : 'border-border/60 bg-muted'}`
   const faviconClassName = `${iconClassName} shrink-0 object-contain ${imagePaddingClassName}`
 
   if (link.iconMode === 'image' && link.iconImageUrl && !imageFailed) {
@@ -90,13 +94,13 @@ function LinkVisual({
   if (link.iconMode === 'material' && link.icon) {
     return (
       <div className={iconFrameClassName}>
-        <AppIcon name={link.icon} className={`${glyphClassName} text-primary `} />
+        <AppIcon name={link.icon} className={`${glyphClassName} ${customBackground ? customLinkCardTextClassName : 'text-primary'} `} />
       </div>
     )
   }
 
   if (link.iconMode === 'text') {
-    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
+    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName, customBackground)
   }
 
   if (faviconUrl && !faviconFailed) {
@@ -116,16 +120,16 @@ function LinkVisual({
   if (link.iconMode === 'favicon') {
     return (
       <div className={fallbackIconFrameClassName}>
-        <AppIcon name="box" className={`${glyphClassName} text-primary `} />
+        <AppIcon name="box" className={`${glyphClassName} ${customBackground ? customLinkCardTextClassName : 'text-primary'} `} />
       </div>
     )
   }
 
   if (link.iconMode === 'image') {
-    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
+    return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName, customBackground)
   }
 
-  return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName)
+  return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName, customBackground)
 }
 
 export function LinkGrid({
@@ -294,7 +298,14 @@ export function LinkGrid({
                     const target = getLinkTarget(link.openMode, openInNewTab)
                     const isDragging = draggingLinkId === link.id
                     const isDragOver = dragOverLinkId === link.id
-                    const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-border bg-card transition-[border-color,background-color,transform,box-shadow,opacity] duration-200 hover:border-ring/35 hover:bg-muted/60 hover:shadow-md ${isDragging ? 'scale-[0.98] bg-muted opacity-60' : ''} ${isDragOver ? 'border-primary ring-1 ring-primary/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
+                    const hasCustomBackground = hasCustomLinkCardBackground(link.backgroundColor)
+                    const hoverClassName = hasCustomBackground
+                      ? 'hover:brightness-95 hover:shadow-md dark:hover:brightness-110'
+                      : 'hover:bg-muted/60 hover:shadow-md'
+                    const draggingClassName = isDragging
+                      ? `scale-[0.98] opacity-60 ${hasCustomBackground ? '' : 'bg-muted'}`
+                      : ''
+                    const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-border bg-card transition-[border-color,background-color,filter,transform,box-shadow,opacity] duration-200 hover:border-ring/35 ${hoverClassName} ${draggingClassName} ${isDragOver ? 'border-primary ring-1 ring-primary/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
 
                     const content = iconOnly ? (
                       <LinkVisual
@@ -314,10 +325,14 @@ export function LinkGrid({
                           fallbackTextClassName={cardDensity === 'compact' ? 'text-lg' : 'text-xl'}
                         />
                         <div className="min-w-0 flex-1 text-left">
-                          <h3 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-[1.05rem]">
+                          <h3
+                            className={`truncate text-base font-semibold tracking-tight sm:text-[1.05rem] ${hasCustomBackground ? customLinkCardTextClassName : 'text-foreground'}`}
+                          >
                             {link.title}
                           </h3>
-                          <p className="mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 text-muted-foreground ">
+                          <p
+                            className={`mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 ${hasCustomBackground ? customLinkCardMutedTextClassName : 'text-muted-foreground'} `}
+                          >
                             {link.description || link.url}
                           </p>
                         </div>
@@ -340,7 +355,7 @@ export function LinkGrid({
                           }}
                           title={`编辑 ${link.title}`}
                           aria-label={`编辑 ${link.title}`}
-                          style={getCardStyle(link.backgroundColor)}
+                          style={getLinkCardStyle(link.backgroundColor)}
                           className={sharedClassName}
                         >
                           {content}
@@ -356,7 +371,7 @@ export function LinkGrid({
                         rel={target === '_blank' ? 'noreferrer' : undefined}
                         title={link.title}
                         aria-label={link.title}
-                        style={getCardStyle(link.backgroundColor)}
+                        style={getLinkCardStyle(link.backgroundColor)}
                         className={sharedClassName}
                       >
                         {content}

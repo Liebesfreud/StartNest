@@ -1,12 +1,12 @@
 export type ThemeMode = 'light' | 'dark' | 'system'
 
 export const THEME_MODE_STORAGE_KEY = 'startnest:theme-mode'
-export const DARK_THEME_COLOR = '#181716'
-export const LIGHT_THEME_COLOR = '#F9F8F6'
+export const DARK_THEME_COLOR = '#0b0b0b'
+export const LIGHT_THEME_COLOR = '#ffffff'
 
 export function resolveTheme(mode: ThemeMode): 'light' | 'dark' {
   if (mode === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light'
   }
 
   return mode
@@ -19,6 +19,10 @@ export function readStoredThemeMode(): ThemeMode | null {
   } catch {
     return null
   }
+}
+
+export function readPreferredThemeMode(): ThemeMode {
+  return readStoredThemeMode() ?? 'system'
 }
 
 function persistThemeMode(mode: ThemeMode) {
@@ -34,9 +38,28 @@ function applyThemeColor(theme: 'light' | 'dark') {
   themeColor?.setAttribute('content', theme === 'dark' ? DARK_THEME_COLOR : LIGHT_THEME_COLOR)
 }
 
-export function applyTheme(mode: ThemeMode) {
+export function applyTheme(mode: ThemeMode): 'light' | 'dark' {
   const theme = resolveTheme(mode)
   document.documentElement.classList.toggle('dark', theme === 'dark')
   applyThemeColor(theme)
   persistThemeMode(mode)
+  return theme
+}
+
+export function watchThemeMode(mode: ThemeMode, onResolvedTheme?: (theme: 'light' | 'dark') => void) {
+  const sync = () => {
+    const theme = applyTheme(mode)
+    onResolvedTheme?.(theme)
+  }
+
+  sync()
+
+  if (mode !== 'system' || typeof window.matchMedia !== 'function') {
+    return () => {}
+  }
+
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  media.addEventListener('change', sync)
+
+  return () => media.removeEventListener('change', sync)
 }

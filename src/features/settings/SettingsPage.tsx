@@ -207,7 +207,7 @@ export function SettingsPage() {
   }
 
   if (isError || !data) {
-    return <div className="flex items-center justify-center px-4 py-24 text-sm text-red-500">加载配置失败。</div>
+    return <div className="flex items-center justify-center px-4 py-24 text-sm text-destructive">加载配置失败。</div>
   }
 
   const updateUserError = updateUser.error instanceof ApiError ? updateUser.error.message : null
@@ -284,7 +284,7 @@ export function SettingsPage() {
             ) : null}
           </SettingSection>
 
-          {settingsMutationError ? <p className="text-sm text-red-500">{settingsMutationError}</p> : null}
+          {settingsMutationError ? <p className="text-sm text-destructive">{settingsMutationError}</p> : null}
         </div>
       </div>
     </PageContainer>

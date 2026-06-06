@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../../lib/auth'
-import { applyTheme, readStoredThemeMode } from '../../lib/theme'
+import { readPreferredThemeMode, watchThemeMode } from '../../lib/theme'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -19,8 +19,7 @@ export function LoginPage() {
 
   // Apply persisted theme so the login page respects dark/light mode
   useEffect(() => {
-    const mode = readStoredThemeMode()
-    if (mode) applyTheme(mode)
+    return watchThemeMode(readPreferredThemeMode())
   }, [])
 
   const redirectTo = searchParams.get('redirect') || '/'
