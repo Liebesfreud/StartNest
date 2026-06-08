@@ -291,7 +291,7 @@ export function CreateLinkDrawer({
                       </Button>
                     ) : null}
                   </div>
-                  <input
+                  <Input
                     type="color"
                     value={draft.backgroundColor || '#f8fafc'}
                     onChange={(event) => setDraft((current) => ({ ...current, backgroundColor: event.target.value }))}

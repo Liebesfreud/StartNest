@@ -341,9 +341,10 @@ export function LinkGrid({
 
                     if (editMode) {
                       return (
-                        <button
+                        <Button
                           key={link.id}
                           type="button"
+                          variant="ghost"
                           draggable
                           onClick={() => onEditLink(link)}
                           onDragStart={(event) => handleDragStart(event, link.id)}
@@ -356,10 +357,10 @@ export function LinkGrid({
                           title={`编辑 ${link.title}`}
                           aria-label={`编辑 ${link.title}`}
                           style={getLinkCardStyle(link.backgroundColor)}
-                          className={sharedClassName}
+                          className={`h-auto justify-start whitespace-normal p-0 text-left font-normal ${sharedClassName}`}
                         >
                           {content}
-                        </button>
+                        </Button>
                       )
                     }
 

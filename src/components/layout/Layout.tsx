@@ -1,4 +1,5 @@
 import { CSSProperties, ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 import { AppIcon } from '../AppIcon'
 import { SideNavBar } from './SideNavBar'
 
@@ -56,15 +57,17 @@ export function Layout({
       {wallpaperUrl ? <div className="app-wallpaper-overlay" style={wallpaperOverlayStyle} aria-hidden="true" /> : null}
       <div className="relative z-10 min-h-screen">
         {!sidebarVisible ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label="显示侧边栏"
             aria-pressed={false}
             onClick={onToggleSidebar}
-            className="fixed left-6 top-6 z-40 hidden h-11 w-11 items-center justify-center rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 md:flex "
+            className="fixed left-6 top-6 z-40 hidden h-11 w-11 rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:ring-ring/20 md:flex"
           >
             <AppIcon name="menu-2" className="h-5 w-5" />
-          </button>
+          </Button>
         ) : null}
         <SideNavBar
           themeMode={themeMode}

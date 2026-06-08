@@ -60,7 +60,7 @@ export function NavigationHero({ weather }: { weather: WeatherState }) {
 
   return (
     <header className="flex flex-col items-center text-center">
-      <h1 className="text-6xl font-semibold leading-none tracking-tight text-foreground">{timeText}</h1>
+      <h1 className="font-mono text-6xl font-light leading-none tracking-normal text-foreground">{timeText}</h1>
       <div className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-muted-foreground">
         <span className="text-xs font-medium uppercase tracking-[0.18em]">{dateText}</span>
         {weatherNode ? <span className="hidden h-1 w-1 rounded-full bg-muted-foreground/30 sm:block" /> : null}

@@ -2,6 +2,7 @@ import { forwardRef } from 'react'
 import { Search } from 'lucide-react'
 import type { SearchEngineOption } from '../../lib/searchEngines'
 import { AppIcon } from '../../components/AppIcon'
+import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 function SearchEngineLogo({ engine }: { engine: SearchEngineOption }) {
@@ -84,7 +85,7 @@ export const NavigationSearch = forwardRef<
           </Select>
         </div>
         <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
-        <input
+        <Input
           ref={ref}
           value={value}
           onChange={(event) => onChange(event.target.value)}
@@ -94,7 +95,7 @@ export const NavigationSearch = forwardRef<
               onSearchWeb()
             }
           }}
-          className="min-w-0 w-full border-none bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/70 focus:ring-0 sm:px-4 sm:text-base"
+          className="h-auto min-w-0 w-full border-none bg-transparent px-3 py-2 text-sm text-foreground shadow-none outline-none placeholder:text-muted-foreground/70 focus-visible:ring-0 sm:px-4 sm:text-base"
           placeholder="搜索内容"
           type="text"
           aria-label="搜索链接或互联网"

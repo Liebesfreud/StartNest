@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 import { AppIcon } from '../AppIcon'
 
 interface TopNavBarProps {
@@ -16,12 +17,15 @@ export function TopNavBar({ searchNode }: TopNavBarProps) {
         </div>
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="hidden min-w-0 md:block">{searchNode}</div>
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             aria-label="打开账户"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 "
+            className="h-10 w-10 rounded-full text-muted-foreground hover:bg-muted hover:text-primary focus-visible:ring-primary/20"
           >
             <AppIcon name="user-circle" className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
       </div>
     </nav>

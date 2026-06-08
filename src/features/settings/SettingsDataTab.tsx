@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { AppIcon } from '../../components/AppIcon'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 
 type SettingsDataTabProps = {
   importPending: boolean
@@ -43,7 +44,7 @@ export function SettingsDataTab({ importPending, importError, onExport, onImport
             {importPending ? '导入中' : '导入'}
           </Button>
         </div>
-        <input
+        <Input
           ref={fileRef}
           type="file"
           accept="application/json"
