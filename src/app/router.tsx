@@ -1,7 +1,11 @@
 import { Suspense, lazy } from 'react'
 import { createBrowserRouter } from 'react-router-dom'
-import { App } from './App'
 import { RequireAuth } from '../features/auth/RequireAuth'
+
+const AuthenticatedApp = lazy(async () => {
+  const module = await import('./AuthenticatedApp')
+  return { default: module.AuthenticatedApp }
+})
 
 const NavigationPage = lazy(async () => {
   const module = await import('../features/navigation/NavigationPage')
@@ -31,6 +35,16 @@ function RouteFallback() {
   )
 }
 
+function ProtectedApp() {
+  return (
+    <RequireAuth>
+      <Suspense fallback={<RouteFallback />}>
+        <AuthenticatedApp />
+      </Suspense>
+    </RequireAuth>
+  )
+}
+
 export const router = createBrowserRouter([
   {
     path: '/login',
@@ -42,11 +56,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: (
-      <RequireAuth>
-        <App />
-      </RequireAuth>
-    ),
+    element: <ProtectedApp />,
     children: [
       {
         index: true,

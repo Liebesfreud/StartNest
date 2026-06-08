@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
-import { api, bootstrapSchema, type BootstrapData } from '../lib/api'
+import { api, type BootstrapData } from '../lib/api'
+import { bootstrapSchema } from '../lib/api.schemas'
 
 export const bootstrapQueryKey = ['bootstrap'] as const
 const BOOTSTRAP_CACHE_KEY = 'startnest:bootstrap'

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
-import { api, ApiError, exportPayloadSchema } from '../../lib/api'
+import { api, ApiError } from '../../lib/api'
+import { exportPayloadSchema } from '../../lib/api.schemas'
 import { AppIcon } from '../../components/AppIcon'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Card } from '@/components/ui/card'
 import type { AppOutletContext } from '../../app/App'
 import { SettingsAdminTab } from './SettingsAdminTab'
 import { SettingsAppearanceTab } from './SettingsAppearanceTab'
@@ -17,31 +17,19 @@ import { SettingsGeneralTab } from './SettingsGeneralTab'
 import { SettingsPanelsTab } from './SettingsPanelsTab'
 import { SettingsSearchEnginesTab } from './SettingsSearchEnginesTab'
 
-type SettingsTab = 'general' | 'search' | 'appearance' | 'data' | 'panels' | 'admin'
-
-const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = [
-  { value: 'general', label: '常规', icon: 'sliders' },
-  { value: 'search', label: '搜索', icon: 'search' },
-  { value: 'appearance', label: '外观', icon: 'palette' },
-  { value: 'panels', label: '面板', icon: 'layout-dashboard' },
-  { value: 'data', label: '数据', icon: 'database' },
-  { value: 'admin', label: '管理', icon: 'user-circle' },
-]
-
 function SettingSection({ icon, title, children }: { icon: string; title: string; children: ReactNode }) {
   return (
-    <section className="space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <AppIcon name={icon} className="h-[18px] w-[18px] text-primary" />
-          <div className="min-w-0">
-            <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{title}</h2>
+    <Card className="overflow-hidden border-border/70 bg-card/80 shadow-sm">
+      <section className="space-y-4 p-4 sm:p-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <AppIcon name={icon} className="h-[18px] w-[18px]" />
           </div>
+          <h2 className="min-w-0 text-lg font-semibold tracking-tight text-foreground">{title}</h2>
         </div>
-        <Separator />
-      </div>
-      <div className="space-y-3">{children}</div>
-    </section>
+        <div className="space-y-3">{children}</div>
+      </section>
+    </Card>
   )
 }
 
@@ -70,7 +58,6 @@ function normalizeWallpaperUrl(value: string) {
 }
 
 export function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<SettingsTab>('general')
   const [nameDraft, setNameDraft] = useState('')
   const [wallpaperDraft, setWallpaperDraft] = useState('')
   const [settingsDraft, setSettingsDraft] = useState<
@@ -211,7 +198,6 @@ export function SettingsPage() {
   const { user } = data
   const displayName = user.displayName || user.name || user.subject || '当前用户'
   const canSaveName = nameDraft.trim() !== (user.displayName ?? '').trim()
-  const currentTab = settingTabs.find((tab) => tab.value === activeTab) ?? settingTabs[0]
 
   return (
     <PageContainer className="py-6 lg:py-8">
@@ -226,32 +212,21 @@ export function SettingsPage() {
           </div>
         </header>
 
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as SettingsTab)}>
-          <TabsList className="h-auto max-w-full justify-start overflow-x-auto bg-transparent p-0 scrollbar-hide">
-            {settingTabs.map((tab) => {
-              return (
-                <TabsTrigger key={tab.value} value={tab.value} className="min-w-fit gap-2">
-                  <AppIcon name={tab.icon} className="h-[18px] w-[18px]" />
-                  {tab.label}
-                </TabsTrigger>
-              )
-            })}
-          </TabsList>
-        </Tabs>
-
         <div className="space-y-5">
-          <SettingSection icon={currentTab.icon} title={currentTab.label}>
-            {activeTab === 'general' ? (
+          <div className="grid gap-4 lg:grid-cols-2 lg:items-start xl:gap-5">
+            <SettingSection icon="sliders" title="常规">
               <SettingsGeneralTab settings={settings} onSaveSetting={handleChangeSetting} />
-            ) : null}
-            {activeTab === 'search' ? (
+            </SettingSection>
+
+            <SettingSection icon="search" title="搜索">
               <SettingsSearchEnginesTab
                 settings={settings}
                 searchEngines={data.searchEngines}
                 onSaveSetting={handleChangeSetting}
               />
-            ) : null}
-            {activeTab === 'appearance' ? (
+            </SettingSection>
+
+            <SettingSection icon="palette" title="外观">
               <SettingsAppearanceTab
                 settings={settings}
                 pending={updateSettings.isPending}
@@ -262,17 +237,22 @@ export function SettingsPage() {
                 onClearWallpaper={handleClearWallpaper}
                 onSaveSetting={handleChangeSetting}
               />
-            ) : null}
-            {activeTab === 'panels' ? <SettingsPanelsTab panels={data.panels} /> : null}
-            {activeTab === 'data' ? (
+            </SettingSection>
+
+            <SettingSection icon="layout-dashboard" title="面板">
+              <SettingsPanelsTab panels={data.panels} />
+            </SettingSection>
+
+            <SettingSection icon="database" title="数据">
               <SettingsDataTab
                 importPending={importMutation.isPending}
                 importError={importError}
                 onExport={handleExport}
                 onImportFile={handleImportFile}
               />
-            ) : null}
-            {activeTab === 'admin' ? (
+            </SettingSection>
+
+            <SettingSection icon="user-circle" title="管理">
               <SettingsAdminTab
                 user={user}
                 displayName={displayName}
@@ -283,8 +263,8 @@ export function SettingsPage() {
                 onNameDraftChange={setNameDraft}
                 onSaveName={handleSaveName}
               />
-            ) : null}
-          </SettingSection>
+            </SettingSection>
+          </div>
 
           <div className="flex flex-col gap-3 rounded-xl border bg-card px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-muted-foreground">

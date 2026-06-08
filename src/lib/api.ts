@@ -1,215 +1,57 @@
-import { z } from 'zod'
+import { weatherResponseSchema } from './api.schemas'
+import type {
+  BootstrapData,
+  BootstrapResult,
+  BootstrapState,
+  ExportPayload,
+  Group,
+  GroupCreatePayload,
+  GroupUpdatePayload,
+  LinkCreatePayload,
+  LinkItem,
+  LinkUpdatePayload,
+  ReorderPayload,
+  SearchEngine,
+  SearchEngineCreatePayload,
+  SearchEngineReorderPayload,
+  SearchEngineUpdatePayload,
+  Settings,
+  SettingsUpdatePayload,
+  User,
+  UserUpdatePayload,
+  WebPanel,
+  WebPanelCreatePayload,
+  WebPanelReorderPayload,
+  WebPanelUpdatePayload,
+} from './api.types'
 
-const userSchema = z.object({
-  email: z.string().min(1),
-  subject: z.string().min(1),
-  name: z.string().nullable(),
-  displayName: z.string().nullable(),
-})
-
-export const updateUserSchema = z.object({
-  displayName: z.string().trim().max(80),
-})
-
-export const groupSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1),
-  icon: z.string().nullable(),
-  sortOrder: z.number().int(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-export const linkSchema = z.object({
-  id: z.string(),
-  groupId: z.string(),
-  title: z.string().min(1),
-  url: z.string().url(),
-  icon: z.string().nullable(),
-  iconMode: z.enum(['favicon', 'material', 'image', 'text']),
-  iconImageUrl: z.string().url().nullable(),
-  iconText: z.string().nullable(),
-  description: z.string().nullable(),
-  tileSize: z.enum(['1x1', '1x3']),
-  openMode: z.enum(['global', 'same-tab', 'new-tab']),
-  backgroundColor: z.string().nullable(),
-  sortOrder: z.number().int(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-export const webPanelSchema = z.object({
-  id: z.string(),
-  title: z.string().min(1),
-  url: z.string().url(),
-  icon: z.string().nullable(),
-  description: z.string().nullable(),
-  openMode: z.enum(['iframe', 'external']),
-  enabled: z.boolean(),
-  sortOrder: z.number().int(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-export const searchEngineSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1),
-  urlTemplate: z.string().min(1),
-  icon: z.string().nullable(),
-  sortOrder: z.number().int(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-})
-
-const wallpaperUrlSchema = z
-  .string()
-  .trim()
-  .max(2048)
-  .url()
-  .refine((value) => {
-    const protocol = new URL(value).protocol
-    return protocol === 'http:' || protocol === 'https:'
-  })
-  .nullable()
-
-const wallpaperBlurSchema = z.number().min(0).max(100)
-const wallpaperOverlayOpacitySchema = z.number().min(0).max(100)
-
-export const settingsSchema = z.object({
-  themeMode: z.enum(['light', 'dark', 'system']),
-  cardDensity: z.enum(['compact', 'comfortable']),
-  openInNewTab: z.boolean(),
-  showGroupIcons: z.boolean(),
-  searchEngine: z.string().default('bing'),
-  weatherEnabled: z.boolean().default(true),
-  weatherAutoLocate: z.boolean().default(false),
-  temperatureUnit: z.enum(['system', 'c', 'f']).default('system'),
-  wallpaperUrl: wallpaperUrlSchema.default(null),
-  wallpaperOverlayOpacity: wallpaperOverlayOpacitySchema.default(78),
-  wallpaperBlur: wallpaperBlurSchema.default(0),
-  updatedAt: z.string(),
-})
-
-export const bootstrapSchema = z.object({
-  user: userSchema,
-  groups: z.array(groupSchema),
-  links: z.array(linkSchema),
-  settings: settingsSchema,
-  panels: z.array(webPanelSchema),
-  searchEngines: z.array(searchEngineSchema).default([]),
-})
-
-export const exportPayloadSchema = z.object({
-  version: z.string(),
-  exportedAt: z.string(),
-  groups: z.array(groupSchema),
-  links: z.array(linkSchema),
-  settings: settingsSchema,
-  panels: z.array(webPanelSchema).default([]),
-  searchEngines: z.array(searchEngineSchema).default([]),
-})
-
-const weatherResponseSchema = z.object({
-  temperature: z.number(),
-  unit: z.enum(['C', 'F']),
-  condition: z.string().min(1),
-  icon: z.string().min(1),
-  locationName: z.string().nullable(),
-  fetchedAt: z.string(),
-})
-
-export type User = z.infer<typeof userSchema>
-export type Group = z.infer<typeof groupSchema>
-export type LinkItem = z.infer<typeof linkSchema>
-export type WebPanel = z.infer<typeof webPanelSchema>
-export type WebPanelOpenMode = WebPanel['openMode']
-export type SearchEngine = z.infer<typeof searchEngineSchema>
-export type Settings = z.infer<typeof settingsSchema>
-export type BootstrapData = z.infer<typeof bootstrapSchema>
-export type ExportPayload = z.infer<typeof exportPayloadSchema>
-export type WeatherResponse = z.infer<typeof weatherResponseSchema>
-export type BootstrapState = Omit<BootstrapData, 'user'>
-
-export type BootstrapResult =
-  | { status: 'fresh'; data: BootstrapData; version: string | null }
-  | { status: 'not-modified'; version: string | null }
-
-export type GroupCreatePayload = {
-  name: string
-  icon?: string | null
-}
-
-export type GroupUpdatePayload = Partial<{
-  name: string
-  icon: string | null
-  sortOrder: number
-}>
-
-export type LinkCreatePayload = {
-  groupId: string
-  title: string
-  url: string
-  icon?: string | null
-  iconMode?: 'favicon' | 'material' | 'image' | 'text'
-  iconImageUrl?: string | null
-  iconText?: string | null
-  description?: string | null
-  tileSize?: '1x1' | '1x3'
-  openMode?: 'global' | 'same-tab' | 'new-tab'
-  backgroundColor?: string | null
-}
-
-export type LinkUpdatePayload = Partial<{
-  groupId: string
-  title: string
-  url: string
-  icon: string | null
-  iconMode: 'favicon' | 'material' | 'image' | 'text'
-  iconImageUrl: string | null
-  iconText: string | null
-  description: string | null
-  tileSize: '1x1' | '1x3'
-  openMode: 'global' | 'same-tab' | 'new-tab'
-  backgroundColor: string | null
-  sortOrder: number
-}>
-
-export type ReorderPayload = {
-  groups: Array<{ id: string; sortOrder: number }>
-  links: Array<{ id: string; groupId: string; sortOrder: number }>
-}
-
-export type SettingsUpdatePayload = Partial<Omit<Settings, 'updatedAt'>>
-export type UserUpdatePayload = z.infer<typeof updateUserSchema>
-
-export type WebPanelCreatePayload = {
-  title: string
-  url: string
-  icon?: string | null
-  description?: string | null
-  openMode?: WebPanelOpenMode
-  enabled?: boolean
-  sortOrder?: number
-}
-
-export type WebPanelUpdatePayload = Partial<WebPanelCreatePayload>
-
-export type WebPanelReorderPayload = {
-  panels: Array<{ id: string; sortOrder: number }>
-}
-
-export type SearchEngineCreatePayload = {
-  name: string
-  urlTemplate: string
-  icon?: string | null
-  sortOrder?: number
-}
-
-export type SearchEngineUpdatePayload = Partial<SearchEngineCreatePayload>
-
-export type SearchEngineReorderPayload = {
-  searchEngines: Array<{ id: string; sortOrder: number }>
-}
+export type {
+  BootstrapData,
+  BootstrapResult,
+  BootstrapState,
+  ExportPayload,
+  Group,
+  GroupCreatePayload,
+  GroupUpdatePayload,
+  LinkCreatePayload,
+  LinkItem,
+  LinkUpdatePayload,
+  ReorderPayload,
+  SearchEngine,
+  SearchEngineCreatePayload,
+  SearchEngineReorderPayload,
+  SearchEngineUpdatePayload,
+  Settings,
+  SettingsUpdatePayload,
+  User,
+  UserUpdatePayload,
+  WebPanel,
+  WebPanelCreatePayload,
+  WebPanelOpenMode,
+  WebPanelReorderPayload,
+  WebPanelUpdatePayload,
+  WeatherResponse,
+} from './api.types'
 
 export class ApiError extends Error {
   code: string
