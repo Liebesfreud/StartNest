@@ -6,6 +6,7 @@ import { AppIcon } from '../../components/AppIcon'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
+import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { AppOutletContext } from '../../app/App'
@@ -85,6 +86,7 @@ export function SettingsPage() {
     onSuccess: ({ settings }) => {
       update({ settings })
       applyTheme(settings.themeMode)
+      setSettingsDraft({})
     },
   })
 
@@ -113,35 +115,26 @@ export function SettingsPage() {
     setNameDraft(data.user.displayName ?? '')
   }, [data])
 
-  useEffect(() => {
-    if (!data || Object.keys(settingsDraft).length === 0) return
-
-    const timer = window.setTimeout(() => {
-      updateSettings.mutate(settingsDraft)
-      setSettingsDraft({})
-    }, 400)
-
-    return () => window.clearTimeout(timer)
-  }, [data, settingsDraft, updateSettings])
-
   const previewSettings = useMemo(() => (data ? { ...data.settings, ...settingsDraft } : null), [data, settingsDraft])
+  const hasSettingsDraft = Object.keys(settingsDraft).length > 0
 
-  const handleSaveSetting = (
+  const handleChangeSetting = (
     payload: Partial<Omit<NonNullable<AppOutletContext['bootstrapData']>['settings'], 'updatedAt'>>,
   ) => {
-    update((current) => ({
-      ...current,
-      settings: {
-        ...current.settings,
-        ...payload,
-      },
-    }))
-
-    if (payload.themeMode) {
-      applyTheme(payload.themeMode)
-    }
-
     setSettingsDraft((current) => ({ ...current, ...payload }))
+  }
+
+  const handleSaveSettings = () => {
+    if (!hasSettingsDraft || updateSettings.isPending) return
+    updateSettings.mutate(settingsDraft)
+  }
+
+  const handleResetSettings = () => {
+    if (!data) return
+    setSettingsDraft({})
+    setWallpaperDraft(data.settings.wallpaperUrl ?? '')
+    setWallpaperError(null)
+    applyTheme(data.settings.themeMode)
   }
 
   const handleSaveWallpaper = () => {
@@ -153,13 +146,13 @@ export function SettingsPage() {
     }
 
     setWallpaperError(null)
-    handleSaveSetting({ wallpaperUrl: parsed.value })
+    handleChangeSetting({ wallpaperUrl: parsed.value })
   }
 
   const handleClearWallpaper = () => {
     setWallpaperError(null)
     setWallpaperDraft('')
-    handleSaveSetting({ wallpaperUrl: null })
+    handleChangeSetting({ wallpaperUrl: null })
   }
 
   const handleWallpaperChange = (value: string) => {
@@ -249,13 +242,13 @@ export function SettingsPage() {
         <div className="space-y-5">
           <SettingSection icon={currentTab.icon} title={currentTab.label}>
             {activeTab === 'general' ? (
-              <SettingsGeneralTab settings={settings} onSaveSetting={handleSaveSetting} />
+              <SettingsGeneralTab settings={settings} onSaveSetting={handleChangeSetting} />
             ) : null}
             {activeTab === 'search' ? (
               <SettingsSearchEnginesTab
                 settings={settings}
                 searchEngines={data.searchEngines}
-                onSaveSetting={handleSaveSetting}
+                onSaveSetting={handleChangeSetting}
               />
             ) : null}
             {activeTab === 'appearance' ? (
@@ -267,7 +260,7 @@ export function SettingsPage() {
                 onWallpaperChange={handleWallpaperChange}
                 onSaveWallpaper={handleSaveWallpaper}
                 onClearWallpaper={handleClearWallpaper}
-                onSaveSetting={handleSaveSetting}
+                onSaveSetting={handleChangeSetting}
               />
             ) : null}
             {activeTab === 'panels' ? <SettingsPanelsTab panels={data.panels} /> : null}
@@ -292,6 +285,20 @@ export function SettingsPage() {
               />
             ) : null}
           </SettingSection>
+
+          <div className="flex flex-col gap-3 rounded-xl border bg-card px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              {hasSettingsDraft ? '有未保存的设置更改，确认后才会写入。' : '修改设置后，请点击保存才会生效。'}
+            </p>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={handleResetSettings} disabled={!hasSettingsDraft || updateSettings.isPending}>
+                撤销更改
+              </Button>
+              <Button onClick={handleSaveSettings} disabled={!hasSettingsDraft || updateSettings.isPending}>
+                {updateSettings.isPending ? '保存中' : '保存设置'}
+              </Button>
+            </div>
+          </div>
 
           {settingsMutationError ? <p className="text-sm text-destructive">{settingsMutationError}</p> : null}
         </div>
