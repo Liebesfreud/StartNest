@@ -14,11 +14,13 @@ import { SettingsAppearanceTab } from './SettingsAppearanceTab'
 import { SettingsDataTab } from './SettingsDataTab'
 import { SettingsGeneralTab } from './SettingsGeneralTab'
 import { SettingsPanelsTab } from './SettingsPanelsTab'
+import { SettingsSearchEnginesTab } from './SettingsSearchEnginesTab'
 
-type SettingsTab = 'general' | 'appearance' | 'data' | 'panels' | 'admin'
+type SettingsTab = 'general' | 'search' | 'appearance' | 'data' | 'panels' | 'admin'
 
 const settingTabs: Array<{ value: SettingsTab; label: string; icon: string }> = [
   { value: 'general', label: '常规', icon: 'sliders' },
+  { value: 'search', label: '搜索', icon: 'search' },
   { value: 'appearance', label: '外观', icon: 'palette' },
   { value: 'panels', label: '面板', icon: 'layout-dashboard' },
   { value: 'data', label: '数据', icon: 'database' },
@@ -248,6 +250,13 @@ export function SettingsPage() {
           <SettingSection icon={currentTab.icon} title={currentTab.label}>
             {activeTab === 'general' ? (
               <SettingsGeneralTab settings={settings} onSaveSetting={handleSaveSetting} />
+            ) : null}
+            {activeTab === 'search' ? (
+              <SettingsSearchEnginesTab
+                settings={settings}
+                searchEngines={data.searchEngines}
+                onSaveSetting={handleSaveSetting}
+              />
             ) : null}
             {activeTab === 'appearance' ? (
               <SettingsAppearanceTab

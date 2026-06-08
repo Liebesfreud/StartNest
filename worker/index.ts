@@ -11,6 +11,13 @@ import { updateUser } from './routes/user'
 import { getWeather } from './routes/weather'
 import { getIcon } from './routes/icon'
 import { listPanels, createPanel, patchPanel, removePanel, reorderPanels } from './routes/panels'
+import {
+  createCustomSearchEngine,
+  listCustomSearchEngines,
+  patchCustomSearchEngine,
+  removeCustomSearchEngine,
+  reorderCustomSearchEngines,
+} from './routes/searchEngines'
 
 function notFound() {
   throw new ApiError(404, 'NOT_FOUND', 'Route not found')
@@ -116,6 +123,21 @@ export default {
         }
         if (url.pathname === '/api/panels/reorder' && request.method === 'POST') {
           return await reorderPanels(request, env)
+        }
+        if (url.pathname === '/api/search-engines' && request.method === 'GET') {
+          return await listCustomSearchEngines(env)
+        }
+        if (url.pathname === '/api/search-engines' && request.method === 'POST') {
+          return await createCustomSearchEngine(request, env)
+        }
+        if (url.pathname === '/api/search-engines/reorder' && request.method === 'POST') {
+          return await reorderCustomSearchEngines(request, env)
+        }
+        if (url.pathname.startsWith('/api/search-engines/') && request.method === 'PATCH') {
+          return await patchCustomSearchEngine(request, env, getIdFromPath(url.pathname))
+        }
+        if (url.pathname.startsWith('/api/search-engines/') && request.method === 'DELETE') {
+          return await removeCustomSearchEngine(env, user, getIdFromPath(url.pathname))
         }
         if (url.pathname.startsWith('/api/panels/') && request.method === 'PATCH') {
           return await patchPanel(request, env, getIdFromPath(url.pathname))

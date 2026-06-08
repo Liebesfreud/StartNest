@@ -1,4 +1,4 @@
-import type { GroupRow, LinkRow, SettingsRow, Env, UserProfileRow, User, WebPanelRow } from './schema'
+import type { GroupRow, LinkRow, SettingsRow, Env, UserProfileRow, User, WebPanelRow, SearchEngineRow } from './schema'
 
 export function nowIso() {
   return new Date().toISOString()
@@ -83,6 +83,18 @@ export function mapSettings(row: SettingsRow) {
   }
 }
 
+export function mapSearchEngine(row: SearchEngineRow) {
+  return {
+    id: row.id,
+    name: row.name,
+    urlTemplate: row.url_template,
+    icon: row.icon,
+    sortOrder: row.sort_order,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
 export async function listGroups(env: Env) {
   const { results } = await env.DB.prepare('SELECT * FROM groups ORDER BY sort_order ASC, created_at ASC').all<GroupRow>()
   return results.map(mapGroup)
@@ -119,6 +131,54 @@ export function mapWebPanel(row: WebPanelRow) {
 export async function listWebPanels(env: Env) {
   const { results } = await env.DB.prepare('SELECT * FROM web_panels ORDER BY sort_order ASC, created_at ASC').all<WebPanelRow>()
   return results.map(mapWebPanel)
+}
+
+export async function listSearchEngines(env: Env) {
+  const { results } = await env.DB.prepare('SELECT * FROM search_engines ORDER BY sort_order ASC, created_at ASC').all<SearchEngineRow>()
+  return results.map(mapSearchEngine)
+}
+
+export async function getSearchEngine(env: Env, id: string) {
+  return await env.DB.prepare('SELECT * FROM search_engines WHERE id = ?').bind(id).first<SearchEngineRow>()
+}
+
+export async function createSearchEngine(env: Env, row: SearchEngineRow) {
+  await env.DB.prepare(
+    'INSERT INTO search_engines (id, name, url_template, icon, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+  )
+    .bind(row.id, row.name, row.url_template, row.icon, row.sort_order, row.created_at, row.updated_at)
+    .run()
+}
+
+export async function updateSearchEngine(env: Env, id: string, row: Partial<Omit<SearchEngineRow, 'id' | 'created_at'>>) {
+  const existing = await getSearchEngine(env, id)
+  if (!existing) return null
+  const updated = {
+    ...existing,
+    ...row,
+    updated_at: nowIso(),
+  }
+  await env.DB.prepare(
+    'UPDATE search_engines SET name = ?, url_template = ?, icon = ?, sort_order = ?, updated_at = ? WHERE id = ?',
+  )
+    .bind(updated.name, updated.url_template, updated.icon, updated.sort_order, updated.updated_at, id)
+    .run()
+  return updated
+}
+
+export async function deleteSearchEngine(env: Env, id: string) {
+  await env.DB.prepare('DELETE FROM search_engines WHERE id = ?').bind(id).run()
+}
+
+export async function reorderSearchEngines(env: Env, items: { id: string; sortOrder: number }[]) {
+  const statements: D1PreparedStatement[] = []
+  const now = nowIso()
+  for (const item of items) {
+    statements.push(env.DB.prepare('UPDATE search_engines SET sort_order = ?, updated_at = ? WHERE id = ?').bind(item.sortOrder, now, item.id))
+  }
+  if (statements.length) {
+    await env.DB.batch(statements)
+  }
 }
 
 export async function getWebPanel(env: Env, id: string) {
@@ -165,26 +225,33 @@ export async function reorderWebPanels(env: Env, items: { id: string; sortOrder:
 }
 
 export async function getBootstrap(env: Env, user?: User) {
-  const [groups, links, settings, panels] = await Promise.all([listGroups(env), listLinks(env), getSettings(env), listWebPanels(env)])
+  const [groups, links, settings, panels, searchEngines] = await Promise.all([
+    listGroups(env),
+    listLinks(env),
+    getSettings(env),
+    listWebPanels(env),
+    listSearchEngines(env),
+  ])
 
   if (!user) {
-    return { groups, links, settings, panels }
+    return { groups, links, settings, panels, searchEngines }
   }
 
   const profile = await getUserProfile(env, user.subject)
-  return { user: applyUserProfile(user, profile), groups, links, settings, panels }
+  return { user: applyUserProfile(user, profile), groups, links, settings, panels, searchEngines }
 }
 
 export async function getBootstrapVersion(env: Env, user?: User) {
-  const [groups, links, settings, panels, profile] = await Promise.all([
+  const [groups, links, settings, panels, searchEngines, profile] = await Promise.all([
     env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM groups').first<{ version: string }>(),
     env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM links').first<{ version: string }>(),
     env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM settings').first<{ version: string }>(),
     env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM web_panels').first<{ version: string }>(),
+    env.DB.prepare('SELECT COUNT(*) || ":" || COALESCE(MAX(updated_at), "") AS version FROM search_engines').first<{ version: string }>(),
     user ? env.DB.prepare('SELECT COALESCE(updated_at, "") AS version FROM user_profiles WHERE subject = ?').bind(user.subject).first<{ version: string }>() : null,
   ])
 
-  return [groups?.version, links?.version, settings?.version, panels?.version, profile?.version]
+  return [groups?.version, links?.version, settings?.version, panels?.version, searchEngines?.version, profile?.version]
     .filter(Boolean)
     .join('|')
 }

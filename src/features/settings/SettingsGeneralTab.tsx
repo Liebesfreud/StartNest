@@ -15,16 +15,6 @@ export function SettingsGeneralTab({ settings, onSaveSetting }: SettingsGeneralT
         checked={settings.openInNewTab}
         onToggle={() => saveSetting(onSaveSetting, 'openInNewTab', !settings.openInNewTab)}
       />
-      <SegmentedControl
-        icon="search"
-        title="默认搜索引擎"
-        value={settings.searchEngine}
-        options={[
-          { value: 'bing', label: '必应' },
-          { value: 'google', label: '谷歌' },
-        ]}
-        onChange={(value) => saveSetting(onSaveSetting, 'searchEngine', value)}
-      />
       <SettingToggleCard
         icon="cloud"
         title="显示天气组件"

@@ -1,9 +1,11 @@
 import { forwardRef } from 'react'
 import { Search } from 'lucide-react'
+import type { SearchEngineOption } from '../../lib/searchEngines'
+import { AppIcon } from '../../components/AppIcon'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
-function SearchEngineLogo({ searchEngine }: { searchEngine: 'google' | 'bing' }) {
-  if (searchEngine === 'google') {
+function SearchEngineLogo({ engine }: { engine: SearchEngineOption }) {
+  if (engine.value === 'google') {
     return (
       <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5 shrink-0">
         <path
@@ -26,12 +28,25 @@ function SearchEngineLogo({ searchEngine }: { searchEngine: 'google' | 'bing' })
     )
   }
 
-  return (
+  if (engine.value === 'bing') {
+    return (
+      <div
+        aria-hidden="true"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[#008373] text-[11px] font-bold leading-none text-primary-foreground"
+      >
+        b
+      </div>
+    )
+  }
+
+  return engine.icon ? (
+    <AppIcon name={engine.icon} className="h-5 w-5 shrink-0 text-muted-foreground" />
+  ) : (
     <div
       aria-hidden="true"
-      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-[#008373] text-[11px] font-bold leading-none text-primary-foreground"
+      className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[5px] bg-muted text-[11px] font-bold leading-none text-muted-foreground"
     >
-      b
+      {engine.name.slice(0, 1).toUpperCase()}
     </div>
   )
 }
@@ -40,27 +55,31 @@ export const NavigationSearch = forwardRef<
   HTMLInputElement,
   {
     value: string
-    searchEngine: 'google' | 'bing'
+    searchEngine: SearchEngineOption
+    searchEngines: SearchEngineOption[]
     onChange: (value: string) => void
-    onSearchEngineChange: (value: 'google' | 'bing') => void
+    onSearchEngineChange: (value: string) => void
     onSearchWeb: () => void
   }
->(function NavigationSearch({ value, searchEngine, onChange, onSearchEngineChange, onSearchWeb }, ref) {
+>(function NavigationSearch({ value, searchEngine, searchEngines, onChange, onSearchEngineChange, onSearchWeb }, ref) {
   return (
     <div className="mx-auto w-full max-w-[60rem]">
       <div className="flex items-center rounded-xl border bg-card/90 px-2.5 py-1.5 shadow-sm backdrop-blur transition-all duration-300 focus-within:ring-2 focus-within:ring-ring/20 sm:px-3">
         <div className="flex shrink-0 items-center gap-2 rounded-full bg-muted px-3 py-1.5 text-muted-foreground">
-          <SearchEngineLogo searchEngine={searchEngine} />
-          <Select value={searchEngine} onValueChange={onSearchEngineChange}>
+          <SearchEngineLogo engine={searchEngine} />
+          <Select value={searchEngine.value} onValueChange={onSearchEngineChange}>
             <SelectTrigger
               aria-label="选择搜索引擎"
-              className="h-auto min-h-0 w-auto min-w-14 gap-1 border-none bg-transparent px-0 py-0 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-none focus:ring-0"
+              className="h-auto min-h-0 w-auto min-w-14 max-w-28 gap-1 border-none bg-transparent px-0 py-0 text-[11px] font-semibold text-muted-foreground shadow-none focus:ring-0"
             >
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="min-w-28">
-              <SelectItem value="bing">必应</SelectItem>
-              <SelectItem value="google">谷歌</SelectItem>
+            <SelectContent className="min-w-32">
+              {searchEngines.map((engine) => (
+                <SelectItem key={engine.value} value={engine.value}>
+                  {engine.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

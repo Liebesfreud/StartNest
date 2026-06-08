@@ -62,13 +62,23 @@ export type WebPanelRow = {
   updated_at: string
 }
 
+export type SearchEngineRow = {
+  id: string
+  name: string
+  url_template: string
+  icon: string | null
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
 export type SettingsRow = {
   id: number
   theme_mode: 'light' | 'dark' | 'system'
   card_density: 'compact' | 'comfortable'
   open_in_new_tab: number
   show_group_icons: number
-  search_engine: 'google' | 'bing'
+  search_engine: string
   weather_enabled: number
   weather_auto_locate: number
   temperature_unit: 'system' | 'c' | 'f'

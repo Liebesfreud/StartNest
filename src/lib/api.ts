@@ -51,6 +51,16 @@ export const webPanelSchema = z.object({
   updatedAt: z.string(),
 })
 
+export const searchEngineSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  urlTemplate: z.string().min(1),
+  icon: z.string().nullable(),
+  sortOrder: z.number().int(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+
 const wallpaperUrlSchema = z
   .string()
   .trim()
@@ -70,7 +80,7 @@ export const settingsSchema = z.object({
   cardDensity: z.enum(['compact', 'comfortable']),
   openInNewTab: z.boolean(),
   showGroupIcons: z.boolean(),
-  searchEngine: z.enum(['google', 'bing']).default('bing'),
+  searchEngine: z.string().default('bing'),
   weatherEnabled: z.boolean().default(true),
   weatherAutoLocate: z.boolean().default(false),
   temperatureUnit: z.enum(['system', 'c', 'f']).default('system'),
@@ -86,6 +96,7 @@ export const bootstrapSchema = z.object({
   links: z.array(linkSchema),
   settings: settingsSchema,
   panels: z.array(webPanelSchema),
+  searchEngines: z.array(searchEngineSchema).default([]),
 })
 
 export const exportPayloadSchema = z.object({
@@ -95,6 +106,7 @@ export const exportPayloadSchema = z.object({
   links: z.array(linkSchema),
   settings: settingsSchema,
   panels: z.array(webPanelSchema).default([]),
+  searchEngines: z.array(searchEngineSchema).default([]),
 })
 
 const weatherResponseSchema = z.object({
@@ -111,6 +123,7 @@ export type Group = z.infer<typeof groupSchema>
 export type LinkItem = z.infer<typeof linkSchema>
 export type WebPanel = z.infer<typeof webPanelSchema>
 export type WebPanelOpenMode = WebPanel['openMode']
+export type SearchEngine = z.infer<typeof searchEngineSchema>
 export type Settings = z.infer<typeof settingsSchema>
 export type BootstrapData = z.infer<typeof bootstrapSchema>
 export type ExportPayload = z.infer<typeof exportPayloadSchema>
@@ -183,6 +196,19 @@ export type WebPanelUpdatePayload = Partial<WebPanelCreatePayload>
 
 export type WebPanelReorderPayload = {
   panels: Array<{ id: string; sortOrder: number }>
+}
+
+export type SearchEngineCreatePayload = {
+  name: string
+  urlTemplate: string
+  icon?: string | null
+  sortOrder?: number
+}
+
+export type SearchEngineUpdatePayload = Partial<SearchEngineCreatePayload>
+
+export type SearchEngineReorderPayload = {
+  searchEngines: Array<{ id: string; sortOrder: number }>
 }
 
 export class ApiError extends Error {
@@ -436,6 +462,24 @@ export const api = {
     request<{ panels: WebPanel[] }>(`/api/panels/${id}`, { method: 'DELETE' }),
   reorderPanels: (payload: WebPanelReorderPayload) =>
     request<{ panels: WebPanel[] }>('/api/panels/reorder', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  listSearchEngines: () => request<{ searchEngines: SearchEngine[] }>('/api/search-engines'),
+  createSearchEngine: (payload: SearchEngineCreatePayload) =>
+    request<{ searchEngine: SearchEngine; searchEngines: SearchEngine[] }>('/api/search-engines', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  updateSearchEngine: (id: string, payload: SearchEngineUpdatePayload) =>
+    request<{ searchEngine: SearchEngine; searchEngines: SearchEngine[] }>(`/api/search-engines/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(payload),
+    }),
+  deleteSearchEngine: (id: string) =>
+    request<BootstrapData>(`/api/search-engines/${id}`, { method: 'DELETE' }),
+  reorderSearchEngines: (payload: SearchEngineReorderPayload) =>
+    request<{ searchEngines: SearchEngine[] }>('/api/search-engines/reorder', {
       method: 'POST',
       body: JSON.stringify(payload),
     }),

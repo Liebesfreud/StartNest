@@ -11,6 +11,7 @@ import {
   type ReorderPayload,
 } from '../../lib/api'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
+import { buildSearchUrl, getSearchEngineOptions, getSelectedSearchEngine } from '../../lib/searchEngines'
 import type { AppOutletContext } from '../../app/App'
 import { PageContainer } from '../../components/layout/PageContainer'
 import { NavigationHero } from './NavigationHero'
@@ -34,11 +35,6 @@ const emptyLinkDraft: LinkDraft = {
   backgroundColor: '',
 }
 const emptyGroupDraft: GroupDraft = { name: '', icon: '' }
-
-const searchEngineBaseUrl = {
-  bing: 'https://www.bing.com/search?q=',
-  google: 'https://www.google.com/search?q=',
-} as const
 
 function roundCoordinate(value: number) {
   return Math.round(value * 1000) / 1000
@@ -127,8 +123,13 @@ export function NavigationPage() {
 
   const groups = data?.groups ?? []
   const links = data?.links ?? []
+  const searchEngines = data?.searchEngines ?? []
   const settings = data?.settings
-  const searchEngine = settings?.searchEngine ?? 'bing'
+  const searchEngineOptions = useMemo(() => getSearchEngineOptions(searchEngines), [searchEngines])
+  const searchEngine = useMemo(
+    () => getSelectedSearchEngine(settings?.searchEngine, searchEngines),
+    [searchEngines, settings?.searchEngine],
+  )
   const rawQuery = search.trim()
   const query = rawQuery.toLowerCase()
   const roundedCoords = coords
@@ -362,7 +363,7 @@ export function NavigationPage() {
 
   const handleSearchWeb = () => {
     if (!rawQuery) return
-    const url = `${searchEngineBaseUrl[searchEngine]}${encodeURIComponent(rawQuery)}`
+    const url = buildSearchUrl(searchEngine.urlTemplate, rawQuery)
     if (settings?.openInNewTab ?? true) {
       window.open(url, '_blank', 'noopener,noreferrer')
       return
@@ -370,7 +371,7 @@ export function NavigationPage() {
     window.location.href = url
   }
 
-  const handleSearchEngineChange = (next: 'google' | 'bing') => {
+  const handleSearchEngineChange = (next: string) => {
     updateSettingsMutation.mutate({ searchEngine: next })
   }
 
@@ -384,6 +385,7 @@ export function NavigationPage() {
               ref={searchRef}
               value={search}
               searchEngine={searchEngine}
+              searchEngines={searchEngineOptions}
               onChange={setSearch}
               onSearchEngineChange={handleSearchEngineChange}
               onSearchWeb={handleSearchWeb}
