@@ -45,7 +45,7 @@ const rowIconClassName = 'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-cent
 
 export function SettingToggleCard({ icon, title, checked, disabled = false, onToggle }: SettingToggleCardProps) {
   return (
-    <Card className={`${sectionItemClassName} flex items-center justify-between gap-3`}>
+    <Card className={`${sectionItemClassName} flex items-center justify-between gap-3 shadow-none`}>
       <div className="flex min-w-0 items-center gap-3">
         <div className={rowIconClassName}>
           <AppIcon name={icon} className="h-[18px] w-[18px]" />
@@ -68,7 +68,7 @@ export function SegmentedControl<T extends string>({
   onChange,
 }: SegmentedControlProps<T>) {
   return (
-    <Card className={sectionItemClassName}>
+    <Card className={`${sectionItemClassName} shadow-none`}>
       <div className="flex items-start gap-3">
         <div className={rowIconClassName}>
           <AppIcon name={icon} className="h-[18px] w-[18px]" />
@@ -109,7 +109,7 @@ export function NumberControl({
   const inputId = useId()
 
   return (
-    <Card className={sectionItemClassName}>
+    <Card className={`${sectionItemClassName} shadow-none`}>
       <div className="flex items-start gap-3">
         <div className={rowIconClassName}>
           <AppIcon name={icon} className="h-[18px] w-[18px]" />

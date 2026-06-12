@@ -9,12 +9,7 @@ import {
   type SearchEngineUpdatePayload,
   type Settings,
 } from '../../lib/api'
-import {
-  builtInSearchEngines,
-  getCustomSearchEngineValue,
-  getSearchEngineOptions,
-  validateSearchUrlTemplate,
-} from '../../lib/searchEngines'
+import { getCustomSearchEngineValue, getSearchEngineOptions, validateSearchUrlTemplate } from '../../lib/searchEngines'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import { AppIcon } from '../../components/AppIcon'
 import {
@@ -232,19 +227,6 @@ export function SettingsSearchEnginesTab({
       </Card>
 
       <div className="space-y-2">
-        {builtInSearchEngines.map((engine) => (
-          <Card key={engine.value} className="px-4 py-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border bg-muted text-sm font-semibold text-muted-foreground">
-                {engine.value === 'google' ? 'G' : 'b'}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-semibold text-foreground">{engine.name}</p>
-                <p className="truncate text-xs text-muted-foreground">{engine.urlTemplate}</p>
-              </div>
-            </div>
-          </Card>
-        ))}
         {searchEngines.length === 0 ? (
           <Card className="border-dashed px-4 py-8 text-center">
             <p className="text-sm text-muted-foreground">暂无自定义搜索引擎。</p>

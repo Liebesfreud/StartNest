@@ -2,6 +2,7 @@ import { type SVGProps } from 'react'
 import type { Icon, IconProps } from '@tabler/icons-react'
 import { getNamedIconUrl } from '../lib/favicon'
 import {
+  IconAdjustments,
   IconAperture,
   IconArrowRight,
   IconArrowUpRight,
@@ -30,6 +31,7 @@ import {
   IconImageInPicture,
   IconKey,
   IconLayoutDashboard,
+  IconLayoutSidebar,
   IconLayoutSidebarLeftCollapse,
   IconLocation,
   IconLogout,
@@ -91,9 +93,12 @@ const iconMap: Record<string, Icon> = {
   home: IconHome,
   image_in_picture: IconImageInPicture,
   'layout-dashboard': IconLayoutDashboard,
+  layout_sidebar: IconLayoutSidebar,
+  'layout-sidebar': IconLayoutSidebar,
   left_panel_close: IconLayoutSidebarLeftCollapse,
   'layout-sidebar-left-collapse': IconLayoutSidebarLeftCollapse,
   light_mode: IconSun,
+  location: IconLocation,
   manage_search: IconSearch,
   logout: IconLogout,
   menu: IconMenu2,
@@ -104,6 +109,8 @@ const iconMap: Record<string, Icon> = {
   north_east: IconArrowUpRight,
   opacity: IconDroplet,
   open_in_new: IconExternalLink,
+  panel_left: IconLayoutSidebar,
+  'panel-left': IconLayoutSidebar,
   palette: IconPalette,
   partly_cloudy_day: IconCloudUp,
   password: IconKey,
@@ -113,9 +120,11 @@ const iconMap: Record<string, Icon> = {
   routine: IconAperture,
   search: IconSearch,
   settings: IconSettings,
+  sliders: IconAdjustments,
   snowing: IconCloudSnow,
   sun: IconSun,
   sunny: IconSun,
+  temperature: IconTemperature,
   thunderstorm: IconCloudStorm,
   travel_explore: IconCompass,
   unfold_more: IconChevronDown,
@@ -125,6 +134,7 @@ const iconMap: Record<string, Icon> = {
   weather_mix: IconCloudRain,
   weather_snowy: IconCloudSnow,
   x: IconX,
+  droplet: IconDroplet,
 }
 
 function resolveIcon(name: string | null | undefined, fallback: Icon) {

@@ -91,27 +91,31 @@ export function SettingsAppearanceTab({
           </div>
         </div>
       </Card>
-      <NumberControl
-        icon="droplet"
-        title="背景遮罩强度"
-        value={settings.wallpaperOverlayOpacity}
-        min={0}
-        max={100}
-        suffix="%"
-        disabled={!settings.wallpaperUrl}
-        onChange={(value) =>
-          saveSetting(onSaveSetting, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))
-        }
-      />
-      <NumberControl
-        icon="aperture"
-        title="背景模糊"
-        value={settings.wallpaperBlur}
-        min={0}
-        max={100}
-        disabled={!settings.wallpaperUrl}
-        onChange={(value) => saveSetting(onSaveSetting, 'wallpaperBlur', normalizeNumberSetting(String(value), 0, 100))}
-      />
+      {settings.wallpaperUrl ? (
+        <>
+          <NumberControl
+            icon="droplet"
+            title="背景遮罩强度"
+            value={settings.wallpaperOverlayOpacity}
+            min={0}
+            max={100}
+            suffix="%"
+            onChange={(value) =>
+              saveSetting(onSaveSetting, 'wallpaperOverlayOpacity', normalizeNumberSetting(String(value), 0, 100))
+            }
+          />
+          <NumberControl
+            icon="aperture"
+            title="背景模糊"
+            value={settings.wallpaperBlur}
+            min={0}
+            max={100}
+            onChange={(value) =>
+              saveSetting(onSaveSetting, 'wallpaperBlur', normalizeNumberSetting(String(value), 0, 100))
+            }
+          />
+        </>
+      ) : null}
     </>
   )
 }

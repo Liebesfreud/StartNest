@@ -86,18 +86,6 @@ export function SettingsAdminTab({
         </div>
       </Card>
 
-      <Card className="px-4 py-4">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center text-muted-foreground">
-              <AppIcon name="password" className="h-[18px] w-[18px]" />
-            </div>
-            <p className="text-sm font-semibold text-foreground">密码</p>
-          </div>
-          <span className="text-xs text-muted-foreground">由登录系统管理</span>
-        </div>
-      </Card>
-
       <Card className="border-destructive/25 bg-destructive/5 px-4 py-4">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">

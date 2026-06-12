@@ -21,25 +21,27 @@ export function SettingsGeneralTab({ settings, onSaveSetting }: SettingsGeneralT
         checked={settings.weatherEnabled}
         onToggle={() => saveSetting(onSaveSetting, 'weatherEnabled', !settings.weatherEnabled)}
       />
-      <SettingToggleCard
-        icon="location"
-        title="自动定位天气位置"
-        checked={settings.weatherAutoLocate}
-        disabled={!settings.weatherEnabled}
-        onToggle={() => saveSetting(onSaveSetting, 'weatherAutoLocate', !settings.weatherAutoLocate)}
-      />
-      <SegmentedControl
-        icon="temperature"
-        title="温度单位"
-        value={settings.temperatureUnit}
-        disabled={!settings.weatherEnabled}
-        options={[
-          { value: 'system', label: '自动' },
-          { value: 'c', label: '°C' },
-          { value: 'f', label: '°F' },
-        ]}
-        onChange={(value) => saveSetting(onSaveSetting, 'temperatureUnit', value)}
-      />
+      {settings.weatherEnabled ? (
+        <>
+          <SettingToggleCard
+            icon="location"
+            title="自动定位天气位置"
+            checked={settings.weatherAutoLocate}
+            onToggle={() => saveSetting(onSaveSetting, 'weatherAutoLocate', !settings.weatherAutoLocate)}
+          />
+          <SegmentedControl
+            icon="temperature"
+            title="温度单位"
+            value={settings.temperatureUnit}
+            options={[
+              { value: 'system', label: '自动' },
+              { value: 'c', label: '°C' },
+              { value: 'f', label: '°F' },
+            ]}
+            onChange={(value) => saveSetting(onSaveSetting, 'temperatureUnit', value)}
+          />
+        </>
+      ) : null}
     </>
   )
 }

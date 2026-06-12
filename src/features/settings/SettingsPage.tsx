@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { api, ApiError } from '../../lib/api'
@@ -8,7 +8,7 @@ import { PageContainer } from '../../components/layout/PageContainer'
 import { applyTheme } from '../../lib/theme'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { AppOutletContext } from '../../app/App'
 import { SettingsAdminTab } from './SettingsAdminTab'
 import { SettingsAppearanceTab } from './SettingsAppearanceTab'
@@ -17,20 +17,16 @@ import { SettingsGeneralTab } from './SettingsGeneralTab'
 import { SettingsPanelsTab } from './SettingsPanelsTab'
 import { SettingsSearchEnginesTab } from './SettingsSearchEnginesTab'
 
-function SettingSection({ icon, title, children }: { icon: string; title: string; children: ReactNode }) {
-  return (
-    <Card className="overflow-hidden border-border/70 bg-card/80 shadow-sm">
-      <section className="space-y-4 p-4 sm:p-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <AppIcon name={icon} className="h-[18px] w-[18px]" />
-          </div>
-          <h2 className="min-w-0 text-lg font-semibold tracking-tight text-foreground">{title}</h2>
-        </div>
-        <div className="space-y-3">{children}</div>
-      </section>
-    </Card>
-  )
+const settingsSections = [
+  { value: 'general', label: '常规', icon: 'sliders' },
+  { value: 'appearance', label: '外观', icon: 'palette' },
+  { value: 'search', label: '搜索', icon: 'search' },
+  { value: 'panels', label: '面板', icon: 'layout-dashboard' },
+  { value: 'account', label: '账户', icon: 'user-circle' },
+] as const
+
+function SectionHeading({ title }: { title: string }) {
+  return <h2 className="text-base font-semibold tracking-tight text-foreground">{title}</h2>
 }
 
 function normalizeWallpaperUrl(value: string) {
@@ -200,33 +196,34 @@ export function SettingsPage() {
   const canSaveName = nameDraft.trim() !== (user.displayName ?? '').trim()
 
   return (
-    <PageContainer className="py-6 lg:py-8">
-      <div className="space-y-6 lg:space-y-7">
-        <header className="border-b pb-5">
-          <div className="min-w-0 max-w-3xl">
-            <p className="text-[13px] font-medium text-muted-foreground">StartNest Settings</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground sm:text-[2.5rem]">个性化设置</h1>
-            <p className="mt-3 text-sm leading-6 text-muted-foreground">
-              在更克制的界面里统一管理主题、导航行为、天气信息与数据备份。
-            </p>
-          </div>
+    <PageContainer className="max-w-6xl py-6 lg:py-8">
+      <div className="space-y-6">
+        <header>
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">设置</h1>
         </header>
 
-        <div className="space-y-5">
-          <div className="grid gap-4 lg:grid-cols-2 lg:items-start xl:gap-5">
-            <SettingSection icon="sliders" title="常规">
+        <Tabs defaultValue="general" orientation="vertical" className="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-8">
+          <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-xl bg-muted/70 p-1 lg:sticky lg:top-6 lg:flex-col lg:self-start lg:overflow-visible">
+            {settingsSections.map((section) => (
+              <TabsTrigger
+                key={section.value}
+                value={section.value}
+                className="h-10 flex-none justify-start gap-2.5 px-3 data-[state=active]:shadow-sm lg:w-full"
+              >
+                <AppIcon name={section.icon} className="h-4 w-4" />
+                {section.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          <div className="min-w-0 max-w-3xl">
+            <TabsContent value="general" className="mt-0 space-y-3">
+              <SectionHeading title="常规" />
               <SettingsGeneralTab settings={settings} onSaveSetting={handleChangeSetting} />
-            </SettingSection>
+            </TabsContent>
 
-            <SettingSection icon="search" title="搜索">
-              <SettingsSearchEnginesTab
-                settings={settings}
-                searchEngines={data.searchEngines}
-                onSaveSetting={handleChangeSetting}
-              />
-            </SettingSection>
-
-            <SettingSection icon="palette" title="外观">
+            <TabsContent value="appearance" className="mt-0 space-y-3">
+              <SectionHeading title="外观" />
               <SettingsAppearanceTab
                 settings={settings}
                 pending={updateSettings.isPending}
@@ -237,51 +234,65 @@ export function SettingsPage() {
                 onClearWallpaper={handleClearWallpaper}
                 onSaveSetting={handleChangeSetting}
               />
-            </SettingSection>
+            </TabsContent>
 
-            <SettingSection icon="layout-dashboard" title="面板">
+            <TabsContent value="search" className="mt-0 space-y-3">
+              <SectionHeading title="搜索" />
+              <SettingsSearchEnginesTab
+                settings={settings}
+                searchEngines={data.searchEngines}
+                onSaveSetting={handleChangeSetting}
+              />
+            </TabsContent>
+
+            <TabsContent value="panels" className="mt-0 space-y-3">
+              <SectionHeading title="面板" />
               <SettingsPanelsTab panels={data.panels} />
-            </SettingSection>
+            </TabsContent>
 
-            <SettingSection icon="database" title="数据">
-              <SettingsDataTab
-                importPending={importMutation.isPending}
-                importError={importError}
-                onExport={handleExport}
-                onImportFile={handleImportFile}
-              />
-            </SettingSection>
+            <TabsContent value="account" className="mt-0 space-y-6">
+              <section className="space-y-3">
+                <SectionHeading title="账户" />
+                <SettingsAdminTab
+                  user={user}
+                  displayName={displayName}
+                  nameDraft={nameDraft}
+                  canSaveName={canSaveName}
+                  updatePending={updateUser.isPending}
+                  updateError={updateUserError}
+                  onNameDraftChange={setNameDraft}
+                  onSaveName={handleSaveName}
+                />
+              </section>
 
-            <SettingSection icon="user-circle" title="管理">
-              <SettingsAdminTab
-                user={user}
-                displayName={displayName}
-                nameDraft={nameDraft}
-                canSaveName={canSaveName}
-                updatePending={updateUser.isPending}
-                updateError={updateUserError}
-                onNameDraftChange={setNameDraft}
-                onSaveName={handleSaveName}
-              />
-            </SettingSection>
+              <section className="space-y-3 border-t pt-6">
+                <SectionHeading title="备份" />
+                <SettingsDataTab
+                  importPending={importMutation.isPending}
+                  importError={importError}
+                  onExport={handleExport}
+                  onImportFile={handleImportFile}
+                />
+              </section>
+            </TabsContent>
+
+            {hasSettingsDraft ? (
+              <div className="sticky bottom-4 mt-5 flex items-center justify-between gap-3 rounded-xl border bg-background/95 p-3 shadow-lg backdrop-blur">
+                <p className="hidden text-sm text-muted-foreground sm:block">设置尚未保存</p>
+                <div className="ml-auto flex gap-2">
+                  <Button variant="ghost" onClick={handleResetSettings} disabled={updateSettings.isPending}>
+                    撤销
+                  </Button>
+                  <Button onClick={handleSaveSettings} disabled={updateSettings.isPending}>
+                    {updateSettings.isPending ? '保存中' : '保存'}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+
+            {settingsMutationError ? <p className="mt-3 text-sm text-destructive">{settingsMutationError}</p> : null}
           </div>
-
-          <div className="flex flex-col gap-3 rounded-xl border bg-card px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">
-              {hasSettingsDraft ? '有未保存的设置更改，确认后才会写入。' : '修改设置后，请点击保存才会生效。'}
-            </p>
-            <div className="flex gap-2">
-              <Button variant="secondary" onClick={handleResetSettings} disabled={!hasSettingsDraft || updateSettings.isPending}>
-                撤销更改
-              </Button>
-              <Button onClick={handleSaveSettings} disabled={!hasSettingsDraft || updateSettings.isPending}>
-                {updateSettings.isPending ? '保存中' : '保存设置'}
-              </Button>
-            </div>
-          </div>
-
-          {settingsMutationError ? <p className="text-sm text-destructive">{settingsMutationError}</p> : null}
-        </div>
+        </Tabs>
       </div>
     </PageContainer>
   )
