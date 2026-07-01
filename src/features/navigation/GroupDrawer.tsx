@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
 export type GroupDraft = {
   name: string
@@ -37,6 +37,7 @@ export function GroupDrawer({
       <SheetContent className="w-[min(100vw,30rem)] overflow-y-auto sm:max-w-md">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
+          <SheetDescription className="sr-only">设置分组名称和图标。</SheetDescription>
         </SheetHeader>
         <div className="mt-6 space-y-5">
           <div className="space-y-3">

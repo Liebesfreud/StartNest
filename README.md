@@ -122,11 +122,12 @@ startnest-db
 0006_add_wallpaper_url.sql
 0007_add_user_profiles.sql
 0008_add_wallpaper_effect_settings.sql
-0008_add_wallpaper_effects.sql
 0009_remove_link_flags.sql
 0010_normalize_settings_schema.sql
 0011_create_web_panels.sql
 0012_add_login_attempts.sql
+0013_add_wallpaper_effects_compat.sql
+0014_create_search_engines.sql
 ```
 
 建议每次执行一个文件。全部执行完成后，数据库中应包含链接、分组、设置、用户资料、Web 面板和登录限制相关表。

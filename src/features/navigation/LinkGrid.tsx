@@ -1,4 +1,4 @@
-import { useState, type DragEvent } from 'react'
+import { memo, useCallback, useRef, useState, type DragEvent } from 'react'
 import { AppIcon } from '../../components/AppIcon'
 import type { Group, LinkItem } from '../../lib/api'
 import { getFaviconUrl } from '../../lib/favicon'
@@ -132,6 +132,123 @@ function LinkVisual({
   return renderTextFallback(fallbackText, `${iconClassName} shrink-0`, fallbackTextClassName, customBackground)
 }
 
+type LinkCardProps = {
+  link: LinkItem
+  groupId: string
+  editMode: boolean
+  cardDensity: 'compact' | 'comfortable'
+  openInNewTab: boolean
+  isDragging: boolean
+  isDragOver: boolean
+  onEditLink: (link: LinkItem) => void
+  onDragStart: (event: DragEvent<HTMLButtonElement>, linkId: string) => void
+  onDragOver: (event: DragEvent<HTMLButtonElement>, linkId: string) => void
+  onDrop: (groupId: string, overLinkId: string) => void
+  onDragEnd: () => void
+  onDragLeave: (linkId: string) => void
+}
+
+// memo 化单张卡片：拖拽时父组件仅更新 isDragging/isDragOver 布尔，
+// 只有真正变化的卡片会重渲染，避免整列表 reconcile。
+const LinkCard = memo(function LinkCard({
+  link,
+  groupId,
+  editMode,
+  cardDensity,
+  openInNewTab,
+  isDragging,
+  isDragOver,
+  onEditLink,
+  onDragStart,
+  onDragOver,
+  onDrop,
+  onDragEnd,
+  onDragLeave,
+}: LinkCardProps) {
+  const iconOnly = link.tileSize === '1x1'
+  const iconClassName = cardDensity === 'compact' ? 'h-12 w-12' : 'h-14 w-14'
+  const glyphClassName = cardDensity === 'compact' ? 'h-9 w-9' : 'h-10 w-10'
+  const imagePaddingClassName = 'p-0.5'
+  const fallbackTextClassName = cardDensity === 'compact' ? 'text-xl' : 'text-2xl'
+  const target = getLinkTarget(link.openMode, openInNewTab)
+  const hasCustomBackground = hasCustomLinkCardBackground(link.backgroundColor)
+  const hoverClassName = hasCustomBackground
+    ? 'hover:brightness-95 hover:shadow-md dark:hover:brightness-110'
+    : 'hover:bg-muted/60 hover:shadow-md'
+  const draggingClassName = isDragging
+    ? `scale-[0.98] opacity-60 ${hasCustomBackground ? '' : 'bg-muted'}`
+    : ''
+  const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-border bg-card transition-[border-color,background-color,filter,transform,box-shadow,opacity] duration-200 hover:border-ring/35 ${hoverClassName} ${draggingClassName} ${isDragOver ? 'border-primary ring-1 ring-primary/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
+
+  const content = iconOnly ? (
+    <LinkVisual
+      link={link}
+      iconClassName={iconClassName}
+      glyphClassName={glyphClassName}
+      imagePaddingClassName={imagePaddingClassName}
+      fallbackTextClassName={fallbackTextClassName}
+    />
+  ) : (
+    <>
+      <LinkVisual
+        link={link}
+        iconClassName={cardDensity === 'compact' ? 'h-10 w-10' : 'h-11 w-11'}
+        glyphClassName={cardDensity === 'compact' ? 'h-7 w-7' : 'h-8 w-8'}
+        imagePaddingClassName={imagePaddingClassName}
+        fallbackTextClassName={cardDensity === 'compact' ? 'text-lg' : 'text-xl'}
+      />
+      <div className="min-w-0 flex-1 text-left">
+        <h3
+          className={`truncate text-base font-semibold tracking-tight sm:text-[1.05rem] ${hasCustomBackground ? customLinkCardTextClassName : 'text-foreground'}`}
+        >
+          {link.title}
+        </h3>
+        <p
+          className={`mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 ${hasCustomBackground ? customLinkCardMutedTextClassName : 'text-muted-foreground'} `}
+        >
+          {link.description || link.url}
+        </p>
+      </div>
+    </>
+  )
+
+  if (editMode) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        draggable
+        onClick={() => onEditLink(link)}
+        onDragStart={(event) => onDragStart(event, link.id)}
+        onDragOver={(event) => onDragOver(event, link.id)}
+        onDrop={() => onDrop(groupId, link.id)}
+        onDragEnd={onDragEnd}
+        onDragLeave={() => onDragLeave(link.id)}
+        title={`编辑 ${link.title}`}
+        aria-label={`编辑 ${link.title}`}
+        style={getLinkCardStyle(link.backgroundColor)}
+        className={`h-auto justify-start whitespace-normal p-0 text-left font-normal ${sharedClassName}`}
+      >
+        {content}
+      </Button>
+    )
+  }
+
+  return (
+    <a
+      href={link.url}
+      target={target}
+      rel={target === '_blank' ? 'noreferrer' : undefined}
+      title={link.title}
+      aria-label={link.title}
+      style={getLinkCardStyle(link.backgroundColor)}
+      className={sharedClassName}
+    >
+      {content}
+    </a>
+  )
+})
+
 export function LinkGrid({
   sections,
   openInNewTab,
@@ -161,31 +278,51 @@ export function LinkGrid({
 }) {
   const [draggingLinkId, setDraggingLinkId] = useState<string | null>(null)
   const [dragOverLinkId, setDragOverLinkId] = useState<string | null>(null)
+  // 用 ref 读取拖拽状态与最新分组，使下面的回调保持稳定引用，
+  // 从而让 memo 化的 LinkCard 在 dragOver 时不被整体重渲染。
+  const draggingLinkIdRef = useRef<string | null>(null)
+  const sectionsRef = useRef(sections)
+  sectionsRef.current = sections
 
-  const handleDragStart = (event: DragEvent<HTMLButtonElement>, linkId: string) => {
+  const handleDragStart = useCallback((event: DragEvent<HTMLButtonElement>, linkId: string) => {
+    draggingLinkIdRef.current = linkId
     setDraggingLinkId(linkId)
     event.dataTransfer.effectAllowed = 'move'
     event.dataTransfer.setData('text/plain', linkId)
-  }
+  }, [])
 
-  const handleDragOver = (event: DragEvent<HTMLButtonElement>, linkId: string) => {
+  const handleDragOver = useCallback((event: DragEvent<HTMLButtonElement>, linkId: string) => {
     event.preventDefault()
-    if (!draggingLinkId || draggingLinkId === linkId) return
-    setDragOverLinkId(linkId)
-  }
+    const dragging = draggingLinkIdRef.current
+    if (!dragging || dragging === linkId) return
+    setDragOverLinkId((current) => (current === linkId ? current : linkId))
+  }, [])
 
-  const handleDrop = (groupId: string, linkIds: string[], overLinkId: string) => {
-    if (!draggingLinkId) return
-    const ordered = reorderIds(linkIds, draggingLinkId, overLinkId)
+  const handleDrop = useCallback(
+    (groupId: string, overLinkId: string) => {
+      const dragging = draggingLinkIdRef.current
+      draggingLinkIdRef.current = null
+      setDraggingLinkId(null)
+      setDragOverLinkId(null)
+      if (!dragging) return
+      const section = sectionsRef.current.find((item) => item.group.id === groupId)
+      if (!section) return
+      const linkIds = section.links.map((item) => item.id)
+      const ordered = reorderIds(linkIds, dragging, overLinkId)
+      if (ordered !== linkIds) onReorderLinks(groupId, ordered)
+    },
+    [onReorderLinks],
+  )
+
+  const handleDragEnd = useCallback(() => {
+    draggingLinkIdRef.current = null
     setDraggingLinkId(null)
     setDragOverLinkId(null)
-    if (ordered !== linkIds) onReorderLinks(groupId, ordered)
-  }
+  }, [])
 
-  const clearDragState = () => {
-    setDraggingLinkId(null)
-    setDragOverLinkId(null)
-  }
+  const handleDragLeave = useCallback((linkId: string) => {
+    setDragOverLinkId((current) => (current === linkId ? null : current))
+  }, [])
 
   if (!sections.length && hideEmptyState) {
     return null
@@ -227,7 +364,6 @@ export function LinkGrid({
 
       {sections.map((section, groupIndex) => {
         const { group, links } = section
-        const linkIds = links.map((link) => link.id)
 
         return (
           <section key={group.id} className="space-y-4 border-b border-border/40 pb-6">
@@ -289,96 +425,24 @@ export function LinkGrid({
                     minWidth: '0',
                   }}
                 >
-                  {links.map((link) => {
-                    const iconOnly = link.tileSize === '1x1'
-                    const iconClassName = cardDensity === 'compact' ? 'h-12 w-12' : 'h-14 w-14'
-                    const glyphClassName = cardDensity === 'compact' ? 'h-9 w-9' : 'h-10 w-10'
-                    const imagePaddingClassName = 'p-0.5'
-                    const fallbackTextClassName = cardDensity === 'compact' ? 'text-xl' : 'text-2xl'
-                    const target = getLinkTarget(link.openMode, openInNewTab)
-                    const isDragging = draggingLinkId === link.id
-                    const isDragOver = dragOverLinkId === link.id
-                    const hasCustomBackground = hasCustomLinkCardBackground(link.backgroundColor)
-                    const hoverClassName = hasCustomBackground
-                      ? 'hover:brightness-95 hover:shadow-md dark:hover:brightness-110'
-                      : 'hover:bg-muted/60 hover:shadow-md'
-                    const draggingClassName = isDragging
-                      ? `scale-[0.98] opacity-60 ${hasCustomBackground ? '' : 'bg-muted'}`
-                      : ''
-                    const sharedClassName = `${editMode ? 'cursor-pointer' : ''} group relative overflow-hidden rounded-xl border border-border bg-card transition-[border-color,background-color,filter,transform,box-shadow,opacity] duration-200 hover:border-ring/35 ${hoverClassName} ${draggingClassName} ${isDragOver ? 'border-primary ring-1 ring-primary/20' : ''} ${getTileClassName(link.tileSize, cardDensity)}`
-
-                    const content = iconOnly ? (
-                      <LinkVisual
-                        link={link}
-                        iconClassName={iconClassName}
-                        glyphClassName={glyphClassName}
-                        imagePaddingClassName={imagePaddingClassName}
-                        fallbackTextClassName={fallbackTextClassName}
-                      />
-                    ) : (
-                      <>
-                        <LinkVisual
-                          link={link}
-                          iconClassName={cardDensity === 'compact' ? 'h-10 w-10' : 'h-11 w-11'}
-                          glyphClassName={cardDensity === 'compact' ? 'h-7 w-7' : 'h-8 w-8'}
-                          imagePaddingClassName={imagePaddingClassName}
-                          fallbackTextClassName={cardDensity === 'compact' ? 'text-lg' : 'text-xl'}
-                        />
-                        <div className="min-w-0 flex-1 text-left">
-                          <h3
-                            className={`truncate text-base font-semibold tracking-tight sm:text-[1.05rem] ${hasCustomBackground ? customLinkCardTextClassName : 'text-foreground'}`}
-                          >
-                            {link.title}
-                          </h3>
-                          <p
-                            className={`mt-0.5 truncate whitespace-nowrap text-[11px] leading-4 ${hasCustomBackground ? customLinkCardMutedTextClassName : 'text-muted-foreground'} `}
-                          >
-                            {link.description || link.url}
-                          </p>
-                        </div>
-                      </>
-                    )
-
-                    if (editMode) {
-                      return (
-                        <Button
-                          key={link.id}
-                          type="button"
-                          variant="ghost"
-                          draggable
-                          onClick={() => onEditLink(link)}
-                          onDragStart={(event) => handleDragStart(event, link.id)}
-                          onDragOver={(event) => handleDragOver(event, link.id)}
-                          onDrop={() => handleDrop(group.id, linkIds, link.id)}
-                          onDragEnd={clearDragState}
-                          onDragLeave={() => {
-                            if (dragOverLinkId === link.id) setDragOverLinkId(null)
-                          }}
-                          title={`编辑 ${link.title}`}
-                          aria-label={`编辑 ${link.title}`}
-                          style={getLinkCardStyle(link.backgroundColor)}
-                          className={`h-auto justify-start whitespace-normal p-0 text-left font-normal ${sharedClassName}`}
-                        >
-                          {content}
-                        </Button>
-                      )
-                    }
-
-                    return (
-                      <a
-                        key={link.id}
-                        href={link.url}
-                        target={target}
-                        rel={target === '_blank' ? 'noreferrer' : undefined}
-                        title={link.title}
-                        aria-label={link.title}
-                        style={getLinkCardStyle(link.backgroundColor)}
-                        className={sharedClassName}
-                      >
-                        {content}
-                      </a>
-                    )
-                  })}
+                  {links.map((link) => (
+                    <LinkCard
+                      key={link.id}
+                      link={link}
+                      groupId={group.id}
+                      editMode={editMode}
+                      cardDensity={cardDensity}
+                      openInNewTab={openInNewTab}
+                      isDragging={draggingLinkId === link.id}
+                      isDragOver={dragOverLinkId === link.id}
+                      onEditLink={onEditLink}
+                      onDragStart={handleDragStart}
+                      onDragOver={handleDragOver}
+                      onDrop={handleDrop}
+                      onDragEnd={handleDragEnd}
+                      onDragLeave={handleDragLeave}
+                    />
+                  ))}
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border/45 bg-secondary/45 px-5 py-10 text-center">

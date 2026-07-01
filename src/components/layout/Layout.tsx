@@ -64,7 +64,7 @@ export function Layout({
             aria-label="显示侧边栏"
             aria-pressed={false}
             onClick={onToggleSidebar}
-            className="fixed left-6 top-6 z-40 hidden h-11 w-11 rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:ring-ring/20 md:flex"
+            className="fixed left-4 top-4 z-40 flex h-11 w-11 rounded-xl border border-border/70 bg-card/90 text-muted-foreground shadow-sm backdrop-blur transition-all duration-200 hover:bg-secondary hover:text-foreground focus-visible:ring-ring/20 md:left-6 md:top-6"
           >
             <AppIcon name="menu-2" className="h-5 w-5" />
           </Button>

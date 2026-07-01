@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Switch } from '@/components/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 
@@ -312,6 +312,7 @@ export function SettingsPanelsTab({ panels }: SettingsPanelsTabProps) {
         <SheetContent className="w-[min(100vw,34rem)] overflow-y-auto sm:max-w-xl">
           <SheetHeader>
             <SheetTitle>{editingPanel ? '编辑面板' : '添加面板'}</SheetTitle>
+            <SheetDescription className="sr-only">配置面板标题、地址和打开方式。</SheetDescription>
           </SheetHeader>
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">
@@ -393,7 +394,11 @@ export function SettingsPanelsTab({ panels }: SettingsPanelsTabProps) {
               <div>
                 <p className="text-sm font-medium text-foreground">启用</p>
               </div>
-              <Switch checked={form.enabled} onCheckedChange={(enabled) => setForm((f) => ({ ...f, enabled }))} />
+              <Switch
+                checked={form.enabled}
+                onCheckedChange={(enabled) => setForm((f) => ({ ...f, enabled }))}
+                aria-label="启用面板"
+              />
             </div>
 
             {mutationError ? <p className="text-sm text-destructive">{mutationError}</p> : null}

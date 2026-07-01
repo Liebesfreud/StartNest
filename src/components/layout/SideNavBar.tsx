@@ -32,7 +32,7 @@ export function SideNavBar({
 
   return (
     <aside
-      className={`fixed left-0 top-0 z-30 hidden h-screen w-20 border-r border-border/80 bg-muted transition-transform duration-200 md:block ${visible ? 'translate-x-0' : '-translate-x-full'}`}
+      className={`fixed left-0 top-0 z-30 block h-screen w-20 border-r border-border/80 bg-muted transition-[transform,visibility] duration-200 ${visible ? 'visible translate-x-0' : 'invisible -translate-x-full'}`}
     >
       <div className="flex h-full flex-col items-center gap-5 px-3 py-6">
         <Button

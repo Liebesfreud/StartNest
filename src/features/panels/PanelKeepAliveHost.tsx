@@ -75,6 +75,10 @@ function ExternalPanel({ panel }: { panel: WebPanel }) {
   )
 }
 
+// 最多同时保活的 iframe 面板数量；超出后按最近使用顺序淘汰最旧的，
+// 避免访问过的 iframe 无限累积占用内存/CPU/网络。
+const MAX_CACHED_PANELS = 5
+
 export function PanelKeepAliveHost({
   bootstrapData,
   activePanelId,
@@ -93,7 +97,12 @@ export function PanelKeepAliveHost({
 
   useEffect(() => {
     if (!activePanel || activePanel.openMode !== 'iframe') return
-    setCachedPanelIds((current) => (current.includes(activePanel.id) ? current : [...current, activePanel.id]))
+    setCachedPanelIds((current) => {
+      // 把当前面板移到末尾标记为最近使用，并保留最近 MAX_CACHED_PANELS 个。
+      const next = current.filter((id) => id !== activePanel.id)
+      next.push(activePanel.id)
+      return next.length > MAX_CACHED_PANELS ? next.slice(next.length - MAX_CACHED_PANELS) : next
+    })
   }, [activePanel])
 
   const cachedPanels =

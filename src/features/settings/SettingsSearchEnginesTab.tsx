@@ -26,7 +26,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 
 type SettingsSearchEnginesTabProps = {
   settings: Settings
@@ -306,6 +306,7 @@ export function SettingsSearchEnginesTab({
         <SheetContent className="w-[min(100vw,34rem)] overflow-y-auto sm:max-w-xl">
           <SheetHeader>
             <SheetTitle>{editingEngine ? '编辑搜索引擎' : '添加搜索引擎'}</SheetTitle>
+            <SheetDescription className="sr-only">配置搜索引擎名称、查询地址和图标。</SheetDescription>
           </SheetHeader>
           <div className="mt-6 space-y-4">
             <div className="space-y-1.5">

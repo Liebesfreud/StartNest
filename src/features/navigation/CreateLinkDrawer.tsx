@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import {
@@ -157,6 +157,7 @@ export function CreateLinkDrawer({
       <SheetContent className="w-[min(100vw,46rem)] overflow-y-auto sm:max-w-3xl">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
+          <SheetDescription className="sr-only">填写链接信息并预览显示效果。</SheetDescription>
         </SheetHeader>
         <div className="mt-6 flex flex-col gap-6">
           <LinkPreview draft={draft} />
@@ -166,12 +167,14 @@ export function CreateLinkDrawer({
               <h3 className="text-[0.95rem] font-semibold tracking-tight text-foreground">基础信息</h3>
               <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
                 <Input
+                  aria-label="链接标题"
                   value={draft.title}
                   onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))}
                   placeholder="标题"
                   maxLength={20}
                 />
                 <Input
+                  aria-label="链接描述"
                   value={draft.description}
                   onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))}
                   placeholder="描述信息"
@@ -180,6 +183,7 @@ export function CreateLinkDrawer({
               </div>
               <div className="grid gap-3 md:grid-cols-[minmax(0,2.3fr)_120px]">
                 <Input
+                  aria-label="链接地址"
                   value={draft.url}
                   onChange={(event) => setDraft((current) => ({ ...current, url: event.target.value }))}
                   placeholder="链接地址 (优先复制)"
@@ -220,6 +224,7 @@ export function CreateLinkDrawer({
                 <div className="w-full md:max-w-[200px]">
                   {draft.iconMode === 'material' ? (
                     <Input
+                      aria-label="内置图标名称"
                       value={draft.icon}
                       onChange={(event) => setDraft((current) => ({ ...current, icon: event.target.value }))}
                       placeholder="图标名 (如: home)"
@@ -227,6 +232,7 @@ export function CreateLinkDrawer({
                   ) : null}
                   {draft.iconMode === 'image' ? (
                     <Input
+                      aria-label="图标图片地址"
                       value={draft.iconImageUrl}
                       onChange={(event) => setDraft((current) => ({ ...current, iconImageUrl: event.target.value }))}
                       placeholder="https://..."
@@ -234,6 +240,7 @@ export function CreateLinkDrawer({
                   ) : null}
                   {draft.iconMode === 'text' ? (
                     <Input
+                      aria-label="文字图标"
                       value={draft.iconText}
                       onChange={(event) =>
                         setDraft((current) => ({ ...current, iconText: event.target.value.slice(0, 2) }))
@@ -273,6 +280,7 @@ export function CreateLinkDrawer({
                 <div className="flex flex-1 items-center gap-2 min-w-[200px]">
                   <div className="relative flex-1">
                     <Input
+                      aria-label="背景色"
                       value={draft.backgroundColor}
                       onChange={(event) => setDraft((current) => ({ ...current, backgroundColor: event.target.value }))}
                       placeholder="背景色 (#HEX)"
@@ -285,6 +293,7 @@ export function CreateLinkDrawer({
                         variant="ghost"
                         size="icon"
                         className="absolute right-1.5 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        aria-label="恢复默认背景色"
                         title="恢复默认"
                       >
                         <X className="h-4 w-4" />
@@ -292,6 +301,7 @@ export function CreateLinkDrawer({
                     ) : null}
                   </div>
                   <Input
+                    aria-label="选择背景色"
                     type="color"
                     value={draft.backgroundColor || '#f8fafc'}
                     onChange={(event) => setDraft((current) => ({ ...current, backgroundColor: event.target.value }))}
