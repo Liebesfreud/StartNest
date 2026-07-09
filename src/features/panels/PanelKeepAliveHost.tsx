@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ExternalLink, Pencil, RefreshCcw, X } from 'lucide-react'
+import { IconExternalLink, IconPencil, IconRefresh, IconX } from '@tabler/icons-react'
 import { AppIcon } from '../../components/AppIcon'
 import type { BootstrapData, WebPanel } from '../../lib/api'
 import { Button } from '@/components/ui/button'
@@ -35,20 +35,20 @@ function PanelToolbar({
       <div className="flex flex-wrap items-center gap-2">
         {panel.openMode === 'iframe' ? (
           <Button variant="secondary" onClick={onReload} className="min-h-9 px-3 py-1.5">
-            <RefreshCcw className="h-4 w-4" />
+            <IconRefresh className="h-4 w-4" />
             刷新
           </Button>
         ) : null}
         <Button variant="secondary" onClick={openExternal} className="min-h-9 px-3 py-1.5">
-          <ExternalLink className="h-4 w-4" />
+          <IconExternalLink className="h-4 w-4" />
           新标签页
         </Button>
         <Button variant="ghost" onClick={onEdit} className="min-h-9 px-3 py-1.5">
-          <Pencil className="h-4 w-4" />
+          <IconPencil className="h-4 w-4" />
           编辑
         </Button>
         <Button variant="ghost" onClick={onClose} className="min-h-9 px-3 py-1.5">
-          <X className="h-4 w-4" />
+          <IconX className="h-4 w-4" />
           关闭
         </Button>
       </div>

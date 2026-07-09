@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from 'lucide-react'
+import { IconPlus } from '@tabler/icons-react'
 import {
   api,
   ApiError,
@@ -12,6 +12,7 @@ import {
 import { getCustomSearchEngineValue, getSearchEngineOptions, validateSearchUrlTemplate } from '../../lib/searchEngines'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import { AppIcon } from '../../components/AppIcon'
+import { SettingsItemActions } from './settingsControls'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -220,7 +221,7 @@ export function SettingsSearchEnginesTab({
             </div>
           </div>
           <Button onClick={openCreate}>
-            <Plus className="h-4 w-4" />
+            <IconPlus className="h-4 w-4" />
             添加
           </Button>
         </div>
@@ -242,54 +243,15 @@ export function SettingsSearchEnginesTab({
                   <p className="truncate text-sm font-semibold text-foreground">{engine.name}</p>
                   <p className="truncate text-xs text-muted-foreground">{engine.urlTemplate}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <Button
-                    type="button"
-                    title="上移"
-                    aria-label="上移"
-                    disabled={index === 0 || reorderMutation.isPending}
-                    onClick={() => handleMove(index, -1)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    title="下移"
-                    aria-label="下移"
-                    disabled={index === searchEngines.length - 1 || reorderMutation.isPending}
-                    onClick={() => handleMove(index, 1)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <ArrowDown className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    title="编辑"
-                    aria-label="编辑"
-                    onClick={() => openEdit(engine)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    title="删除"
-                    aria-label="删除"
-                    onClick={() => setDeleteTarget(engine)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                <SettingsItemActions
+                  canMoveUp={index > 0}
+                  canMoveDown={index < searchEngines.length - 1}
+                  moving={reorderMutation.isPending}
+                  onMoveUp={() => handleMove(index, -1)}
+                  onMoveDown={() => handleMove(index, 1)}
+                  onEdit={() => openEdit(engine)}
+                  onDelete={() => setDeleteTarget(engine)}
+                />
               </div>
             </Card>
           ))

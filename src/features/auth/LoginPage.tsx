@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams, Navigate } from 'react-router-dom'
-import { Eye, EyeOff } from 'lucide-react'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
 import { useAuth } from '../../lib/auth'
 import { readPreferredThemeMode, watchThemeMode } from '../../lib/theme'
 import { Button } from '@/components/ui/button'
@@ -109,7 +109,7 @@ export function LoginPage() {
                     size="icon"
                     className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <IconEyeOff className="h-4 w-4" /> : <IconEye className="h-4 w-4" />}
                   </Button>
                 </div>
               </div>

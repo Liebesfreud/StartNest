@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { IconX } from '@tabler/icons-react'
 import type { Group } from '../../lib/api'
 import { AppIcon } from '../../components/AppIcon'
 import { getFaviconUrl } from '../../lib/favicon'
@@ -296,7 +296,7 @@ export function CreateLinkDrawer({
                         aria-label="恢复默认背景色"
                         title="恢复默认"
                       >
-                        <X className="h-4 w-4" />
+                        <IconX className="h-4 w-4" />
                       </Button>
                     ) : null}
                   </div>

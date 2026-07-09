@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { Search } from 'lucide-react'
+import { IconSearch } from '@tabler/icons-react'
 import type { SearchEngineOption } from '../../lib/searchEngines'
 import { AppIcon } from '../../components/AppIcon'
 import { Input } from '@/components/ui/input'
@@ -84,7 +84,7 @@ export const NavigationSearch = forwardRef<
             </SelectContent>
           </Select>
         </div>
-        <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+        <IconSearch className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
         <Input
           ref={ref}
           value={value}

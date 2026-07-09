@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { ArrowDown, ArrowUp, Pencil, Trash2 } from 'lucide-react'
 import { api, ApiError, type WebPanel, type WebPanelCreatePayload, type WebPanelUpdatePayload } from '../../lib/api'
 import { useBootstrapCache } from '../../hooks/useBootstrap'
 import { AppIcon } from '../../components/AppIcon'
+import { SettingsItemActions } from './settingsControls'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -242,60 +242,22 @@ export function SettingsPanelsTab({ panels }: SettingsPanelsTabProps) {
                   <p className="truncate text-sm font-semibold text-foreground">{panel.title}</p>
                   <p className="truncate text-xs text-muted-foreground">{panel.url}</p>
                 </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <Button
-                    type="button"
-                    title="上移"
-                    aria-label="上移"
-                    disabled={index === 0 || reorderMutation.isPending}
-                    onClick={() => handleMoveUp(index)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <ArrowUp className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    title="下移"
-                    aria-label="下移"
-                    disabled={index === panels.length - 1 || reorderMutation.isPending}
-                    onClick={() => handleMoveDown(index)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <ArrowDown className="h-4 w-4" />
-                  </Button>
+                <SettingsItemActions
+                  canMoveUp={index > 0}
+                  canMoveDown={index < panels.length - 1}
+                  moving={reorderMutation.isPending}
+                  onMoveUp={() => handleMoveUp(index)}
+                  onMoveDown={() => handleMoveDown(index)}
+                  onEdit={() => openEdit(panel)}
+                  onDelete={() => setDeleteTarget(panel)}
+                >
                   <Switch
                     checked={panel.enabled}
                     aria-label={panel.enabled ? '已启用' : '已禁用'}
                     onCheckedChange={(enabled) => toggleEnabledMutation.mutate({ id: panel.id, enabled })}
                     disabled={toggleEnabledMutation.isPending}
                   />
-                  <Button
-                    type="button"
-                    title="编辑"
-                    aria-label="编辑"
-                    onClick={() => openEdit(panel)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    title="删除"
-                    aria-label="删除"
-                    onClick={() => setDeleteTarget(panel)}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                </SettingsItemActions>
               </div>
             </Card>
           ))}

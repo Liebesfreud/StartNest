@@ -89,6 +89,60 @@ function isApiResponse<T>(value: unknown): value is ApiResponse<T> {
   return typeof value === 'object' && value !== null && 'ok' in value
 }
 
+async function fetchApi(input: RequestInfo, init?: RequestInit): Promise<Response> {
+  try {
+    return await fetch(input, init)
+  } catch (error) {
+    throw new ApiError({
+      message: '网络请求失败，请检查连接后重试。',
+      code: 'NETWORK_ERROR',
+      details: error,
+    })
+  }
+}
+
+function handleUnauthorized(response: Response) {
+  if (response.status !== 401) return
+
+  try {
+    localStorage.removeItem('startnest:auth')
+    localStorage.removeItem('startnest:bootstrap')
+  } catch {}
+  window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
+  throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
+}
+
+function unwrapApiData<T>(response: Response, json: ApiResponse<T>): T {
+  if (!response.ok) {
+    if (!json.ok) {
+      throw new ApiError({
+        message: json.error.message || '请求失败。',
+        code: json.error.code || 'REQUEST_FAILED',
+        status: response.status,
+        details: json.error.details,
+      })
+    }
+
+    throw new ApiError({
+      message: '请求失败。',
+      code: 'HTTP_ERROR',
+      status: response.status,
+      details: json,
+    })
+  }
+
+  if (!json.ok) {
+    throw new ApiError({
+      message: json.error.message || '请求失败。',
+      code: json.error.code || 'REQUEST_FAILED',
+      status: response.status,
+      details: json.error.details,
+    })
+  }
+
+  return json.data
+}
+
 async function parseResponseBody<T>(response: Response): Promise<ApiResponse<T>> {
   const contentType = response.headers.get('content-type') ?? ''
 
@@ -125,126 +179,34 @@ async function parseResponseBody<T>(response: Response): Promise<ApiResponse<T>>
 }
 
 async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
-  let response: Response
+  const { headers, ...restInit } = init ?? {}
+  const response = await fetchApi(input, {
+    credentials: 'same-origin',
+    ...restInit,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(headers ?? {}),
+    },
+  })
 
-  try {
-    response = await fetch(input, {
-      credentials: 'same-origin',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(init?.headers ?? {}),
-      },
-      ...init,
-    })
-  } catch (error) {
-    throw new ApiError({
-      message: '网络请求失败，请检查连接后重试。',
-      code: 'NETWORK_ERROR',
-      details: error,
-    })
-  }
-
-  // Auto-logout on 401 — session expired or invalid
-  if (response.status === 401) {
-    try {
-      localStorage.removeItem('startnest:auth')
-      localStorage.removeItem('startnest:bootstrap')
-    } catch {}
-    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
-    throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
-  }
-
+  handleUnauthorized(response)
   const json = await parseResponseBody<T>(response)
-
-  if (!response.ok) {
-    if (!json.ok) {
-      throw new ApiError({
-        message: json.error.message || '请求失败。',
-        code: json.error.code || 'REQUEST_FAILED',
-        status: response.status,
-        details: json.error.details,
-      })
-    }
-
-    throw new ApiError({
-      message: '请求失败。',
-      code: 'HTTP_ERROR',
-      status: response.status,
-      details: json,
-    })
-  }
-
-  if (!json.ok) {
-    throw new ApiError({
-      message: json.error.message || '请求失败。',
-      code: json.error.code || 'REQUEST_FAILED',
-      status: response.status,
-      details: json.error.details,
-    })
-  }
-
-  return json.data
+  return unwrapApiData(response, json)
 }
 
 async function requestBootstrap(version?: string | null): Promise<BootstrapResult> {
-  let response: Response
-
-  try {
-    response = await fetch('/api/bootstrap', {
-      credentials: 'same-origin',
-      headers: version ? { 'If-None-Match': version } : undefined,
-    })
-  } catch (error) {
-    throw new ApiError({
-      message: '网络请求失败，请检查连接后重试。',
-      code: 'NETWORK_ERROR',
-      details: error,
-    })
-  }
+  const response = await fetchApi('/api/bootstrap', {
+    credentials: 'same-origin',
+    headers: version ? { 'If-None-Match': version } : undefined,
+  })
 
   if (response.status === 304) {
     return { status: 'not-modified', version: response.headers.get('ETag') }
   }
 
-  if (response.status === 401) {
-    try {
-      localStorage.removeItem('startnest:auth')
-      localStorage.removeItem('startnest:bootstrap')
-    } catch {}
-    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`
-    throw new ApiError({ message: '登录已过期，请重新登录。', code: 'UNAUTHORIZED', status: 401 })
-  }
-
+  handleUnauthorized(response)
   const json = await parseResponseBody<BootstrapData>(response)
-
-  if (!response.ok) {
-    if (!json.ok) {
-      throw new ApiError({
-        message: json.error.message || '请求失败。',
-        code: json.error.code || 'REQUEST_FAILED',
-        status: response.status,
-        details: json.error.details,
-      })
-    }
-
-    throw new ApiError({
-      message: '请求失败。',
-      code: 'HTTP_ERROR',
-      status: response.status,
-      details: json,
-    })
-  }
-
-  if (!json.ok) {
-    throw new ApiError({
-      message: json.error.message || '请求失败。',
-      code: json.error.code || 'REQUEST_FAILED',
-      status: response.status,
-      details: json.error.details,
-    })
-  }
-
-  return { status: 'fresh', data: json.data, version: response.headers.get('ETag') }
+  return { status: 'fresh', data: unwrapApiData(response, json), version: response.headers.get('ETag') }
 }
 
 export const api = {

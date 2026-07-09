@@ -1,6 +1,9 @@
 import { useId } from 'react'
+import type { ReactNode } from 'react'
+import { IconArrowDown, IconArrowUp, IconPencil, IconTrash } from '@tabler/icons-react'
 import type { Settings } from '../../lib/api'
 import { AppIcon } from '../../components/AppIcon'
+import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -38,6 +41,17 @@ type NumberControlProps = {
   suffix?: string
   disabled?: boolean
   onChange: (value: number) => void
+}
+
+type SettingsItemActionsProps = {
+  canMoveUp: boolean
+  canMoveDown: boolean
+  moving?: boolean
+  onMoveUp: () => void
+  onMoveDown: () => void
+  onEdit: () => void
+  onDelete: () => void
+  children?: ReactNode
 }
 
 const sectionItemClassName = 'px-4 py-4'
@@ -138,6 +152,69 @@ export function NumberControl({
         </div>
       </div>
     </Card>
+  )
+}
+
+export function SettingsItemActions({
+  canMoveUp,
+  canMoveDown,
+  moving = false,
+  onMoveUp,
+  onMoveDown,
+  onEdit,
+  onDelete,
+  children,
+}: SettingsItemActionsProps) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Button
+        type="button"
+        title="上移"
+        aria-label="上移"
+        disabled={!canMoveUp || moving}
+        onClick={onMoveUp}
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+      >
+        <IconArrowUp className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        title="下移"
+        aria-label="下移"
+        disabled={!canMoveDown || moving}
+        onClick={onMoveDown}
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+      >
+        <IconArrowDown className="h-4 w-4" />
+      </Button>
+      {children}
+      <Button
+        type="button"
+        title="编辑"
+        aria-label="编辑"
+        onClick={onEdit}
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8"
+      >
+        <IconPencil className="h-4 w-4" />
+      </Button>
+      <Button
+        type="button"
+        title="删除"
+        aria-label="删除"
+        onClick={onDelete}
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 text-muted-foreground hover:text-destructive"
+      >
+        <IconTrash className="h-4 w-4" />
+      </Button>
+    </div>
   )
 }
 
