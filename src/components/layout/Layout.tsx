@@ -69,6 +69,15 @@ export function Layout({
             <AppIcon name="menu-2" className="h-5 w-5" />
           </Button>
         ) : null}
+        {sidebarVisible ? (
+          <Button
+            type="button"
+            variant="ghost"
+            aria-label="关闭侧边栏"
+            onClick={onToggleSidebar}
+            className="fixed inset-0 z-20 h-auto w-auto rounded-none bg-background/70 p-0 backdrop-blur-sm hover:bg-background/70 md:hidden"
+          />
+        ) : null}
         <SideNavBar
           themeMode={themeMode}
           onToggleTheme={onToggleTheme}

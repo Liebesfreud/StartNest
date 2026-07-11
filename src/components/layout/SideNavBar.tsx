@@ -27,6 +27,11 @@ export function SideNavBar({
   const { logout } = useAuth()
   const { data } = useBootstrapQuery()
   const panels = (data?.panels ?? []).filter((panel) => panel.enabled)
+  const handleMobileNavigation = () => {
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      onToggleVisible()
+    }
+  }
   const itemClassName = (active: boolean) =>
     `flex h-11 w-11 items-center justify-center rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/20 [&_svg]:!text-current [&_span]:!text-current ${active ? 'bg-primary text-primary-foreground ' : 'text-muted-foreground hover:bg-secondary hover:text-foreground '}`
 
@@ -59,6 +64,7 @@ export function SideNavBar({
                 to={item.path}
                 aria-label={item.name}
                 title={item.name}
+                onClick={handleMobileNavigation}
                 className={itemClassName(isActive)}
               >
                 <AppIcon name={item.icon} className="h-5 w-5" />
@@ -75,6 +81,7 @@ export function SideNavBar({
                 to={path}
                 aria-label={panel.title}
                 title={panel.title}
+                onClick={handleMobileNavigation}
                 className={itemClassName(isActive)}
               >
                 <AppIcon name={panel.icon || 'layout-dashboard'} className="h-5 w-5" />
@@ -88,6 +95,7 @@ export function SideNavBar({
             to="/settings"
             aria-label="设置"
             title="设置"
+            onClick={handleMobileNavigation}
             className={itemClassName(location.pathname.startsWith('/settings'))}
           >
             <AppIcon name="settings" className="h-5 w-5" />

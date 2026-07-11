@@ -198,19 +198,19 @@ export function SettingsPage() {
   return (
     <PageContainer className="max-w-6xl py-6 lg:py-8">
       <div className="space-y-6">
-        <header>
+        <header className="flex min-h-11 items-center pl-14 xl:pl-0">
           <h1 className="text-3xl font-semibold tracking-tight text-foreground">设置</h1>
         </header>
 
         <Tabs defaultValue="general" orientation="vertical" className="grid gap-5 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-8">
-          <TabsList className="h-auto w-full justify-start gap-1 overflow-x-auto rounded-xl bg-muted/70 p-1 lg:sticky lg:top-6 lg:flex-col lg:self-start lg:overflow-visible">
+          <TabsList className="grid h-auto w-full grid-cols-5 justify-stretch gap-1 rounded-xl bg-muted/70 p-1 lg:sticky lg:top-6 lg:flex lg:flex-col lg:self-start">
             {settingsSections.map((section) => (
               <TabsTrigger
                 key={section.value}
                 value={section.value}
-                className="h-10 flex-none justify-start gap-2.5 px-3 data-[state=active]:shadow-sm lg:w-full"
+                className="h-10 min-w-0 justify-center gap-1 px-1 data-[state=active]:shadow-sm lg:w-full lg:justify-start lg:gap-2.5 lg:px-3"
               >
-                <AppIcon name={section.icon} className="h-4 w-4" />
+                <AppIcon name={section.icon} className="size-4" />
                 {section.label}
               </TabsTrigger>
             ))}
