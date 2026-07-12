@@ -34,13 +34,13 @@
     "clsx": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.1",
+    "react-router-dom": "^7.18.1",
     "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7",
     "zod": "^4.1.11"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20251004.0",
+    "@cloudflare/workers-types": "^5.20260712.1",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
@@ -50,6 +50,6 @@
     "typescript": "^5.9.2",
     "vite": "^8.0.14",
     "vitest": "^4.1.10",
-    "wrangler": "^4.94.0"
+    "wrangler": "^4.110.0"
   }
 }
