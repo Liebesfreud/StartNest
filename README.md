@@ -1,5 +1,7 @@
 # StartNest
 
+![StartNest 项目封面](./docs/assets/startnest-cover.svg)
+
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/Liebesfreud/StartNest)
 
 StartNest 是一个自托管的私人起始页和书签工作台，用来管理常用链接、分组、界面偏好和 Web 面板。
